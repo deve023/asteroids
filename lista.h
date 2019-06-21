@@ -20,9 +20,10 @@ void *lista_extraer_primero(lista_t *l);
 void *lista_extraer_ultimo(lista_t *l);
 void *lista_buscar(const lista_t *l, const void *d, int (*cmp)(const void *a, const void *b));
 void *lista_borrar(lista_t *l, const void *dato, int (*cmp)(const void *a, const void *b));
-void lista_recorrer(const lista_t *l, bool (*visitar)(const void *dato, void *extra), void *extra);
-void lista_mapear(lista_t *l, void *(*f)(void *dato));
-lista_t *lista_filtrar(lista_t *l, bool (*f)(void *dato));
+void lista_recorrer(const lista_t *l, bool (*visitar)(void *dato, void *extra), void *extra);
+
+void lista_mapear(lista_t *l, void *(*f)(void *dato, void *extra), void *extra);
+lista_t *lista_filtrar(lista_t *l, bool (*f)(void *dato, void *extra), void *extra);
 bool lista_extender(lista_t *a, const lista_t *b);
 void **lista_a_vector(const lista_t *l, size_t *n);
 
