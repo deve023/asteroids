@@ -6,27 +6,33 @@ typedef struct sprite {
     float **coords;
 } sprite_t;
 
+static SDL_Renderer *renderer;
+
+//Lista con los sprites
+static lista_t *ls;
+
 static sprite_t *sprite_crear() {
     sprite_t *s = malloc(sizeof(sprite_t));
     if(s == NULL)
         return NULL;
 
+    s->n = 0;
+    s->coords = NULL;
+
     return s;
 }
 
-static void sprite_destruir(sprite_t *s) {
-    for(size_t i = 0; i < s->n; i++)
-        free(s->coords[i]);
+static void sprite_destruir(void *s) {
+    vector_destruir(((sprite_t*)s)->coords, ((sprite_t*)s)->n);
     free(s);
 }
 
-static int sprite_comparar_nombre(const sprite_t *s, const char *n) {
-    return strcmp(s->nombre, n);
+static int sprite_comparar_nombre(const void *s, const void *n) {
+    return strcmp(((sprite_t*)s)->nombre, (char*)n);
 }
 
 bool graficador_inicializar(const char *fn, SDL_Renderer *r) {
-    FILE *fp;
-    fp = fopen(fn, "rf");
+    FILE *fp = fopen(fn, "r");
     if(fp == NULL)
         return false;
 

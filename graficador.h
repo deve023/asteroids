@@ -12,11 +12,6 @@
 #define VENTANA_ANCHO 1000
 #define VENTANA_ALTO 800
 
-SDL_Renderer *renderer;
-
-//Lista con los sprites
-lista_t *ls;
-
 bool graficador_inicializar(const char *fn, SDL_Renderer *r);
 void graficador_finalizar();
 
