@@ -100,24 +100,34 @@ void *lista_extraer_primero(lista_t *l) {
 	return d;
 }
 
-void *lista_extraer_ultimo(lista_t *l) {
+void * lista_extraer_ultimo(lista_t * l)
+{
+	//Si esta vacia devuelvo NULL
 	if(lista_es_vacia(l))
 		return NULL;
 
-	nodo_t *aux = l->prim; // Apuntara al ultimo nodo
- 	nodo_t *ant; // Apuntara al anteultimo nodo
-	while(aux->sig != NULL) {
-		ant = aux;
-		aux = aux->sig;
+	//Si tiene un solo elemento extraigo ese
+	if(l->prim->sig == NULL)
+	{
+		void * d = l->prim->dato;
+		free(l->prim);
+		l->prim = NULL;
+		return d;
 	}
 
-	void *d = aux->dato;
+	//Si tiene mas de un elemento busco el anteultimo
+	nodo_t * aux = l->prim;
+	while(aux->sig->sig != NULL)
+		aux = aux->sig;
 
-	ant->sig = NULL; // El anteultimo pasa a ser el ultimo
-	free(aux);
+	//Extraigo el ultimo elemento
+	void * d = aux->sig->dato;
+	free(aux->sig);
+	aux->sig = NULL;
 
 	return d;
 }
+
 
 void *lista_buscar(const lista_t *l, const void *d, int (*cmp)(const void *a, const void *b)) {
 
@@ -132,7 +142,7 @@ void *lista_buscar(const lista_t *l, const void *d, int (*cmp)(const void *a, co
 	return NULL;
 }
 
-void *lista_borrar(lista_t *l, const void *d, int (*cmp)(const void *a, const void *b)) {
+/*void *lista_borrar(lista_t *l, const void *d, int (*cmp)(const void *a, const void *b)) {
 
 	if(lista_es_vacia(l))
 		return NULL;
@@ -161,9 +171,36 @@ void *lista_borrar(lista_t *l, const void *d, int (*cmp)(const void *a, const vo
 	free(n);
 
 	return dato;
-}
+}*/
 
-void lista_recorrer(const lista_t *l, bool (*visitar)(const void *dato, void *extra), void *extra) {
+void *lista_borrar(lista_t *l, const void *d, int (*cmp)(const void *a, const void *b)) {                                    
+    // Retiramos ocurrencias al comienzo.                                      
+    while(l->prim && cmp(l->prim->dato, d) == 0) {                                      
+        struct nodo *aux = l->prim->sig;                                        
+        free(l->prim);                                                          
+        l->prim = aux;                                                          
+    }                                                                          
+                                                                               
+    // Verificamos que quede al menos un elemento.                              
+    if(l->prim == NULL)                                                        
+        return (void*)d;                                                                
+                                                                               
+    // Retiramos de resto.                                                      
+    struct nodo *ant = l->prim;                                                
+    while(ant->sig) {                                                          
+        struct nodo *actual = ant->sig;                                        
+        if(cmp(actual->dato, d) == 0) {                                                
+            ant->sig = actual->sig;                                            
+            free(actual);                                                      
+        }                                                                      
+        else                                                                    
+            ant = actual;                                                      
+    }
+
+    return (void*)d;                                                                         
+}    
+
+void lista_recorrer(const lista_t *l, bool (*visitar)(void *dato, void *extra), void *extra) {
 
 	nodo_t *n = l->prim;
 	while(n != NULL) {
@@ -173,26 +210,29 @@ void lista_recorrer(const lista_t *l, bool (*visitar)(const void *dato, void *ex
 	}
 }
 
-void lista_mapear(lista_t *l, void *(*f)(void *dato)) {
+void lista_mapear(lista_t *l, void *(*f)(void *dato, void *extra), void *extra) {
 
 	nodo_t *n = l->prim;
 	while(n != NULL) {
-		n->dato = f(n->dato);
+		n->dato = f(n->dato, extra);
 		n = n->sig;
 	}
 }
 
-lista_t *lista_filtrar(lista_t *l, bool (*f)(void *dato)) {
+lista_t *lista_filtrar(lista_t *l, bool (*f)(void *dato, void *extra), void *extra){
 
 	lista_t * nl = lista_crear();
+	if(nl == NULL)
+		return NULL;
+
 	nodo_t *aux = l->prim;
 
 	//Miro los primeros elementos
-	while(aux != NULL && f(aux->dato)) {
-		if(!lista_insertar_final(nl, lista_extraer_primero(l)))
-			return NULL;
 
-		aux = aux->sig;
+	while(aux != NULL && f(aux->dato, extra)) {
+		void * d = lista_extraer_primero(l);
+		lista_insertar_final(nl, d);
+		aux = l->prim;
 	}
 
 	//Chequeo si ya se termino la lista
@@ -203,10 +243,11 @@ lista_t *lista_filtrar(lista_t *l, bool (*f)(void *dato)) {
 	nodo_t *ant = aux;
 	aux = aux->sig;
 
-        while(aux != NULL) {
-                if(f(aux->dato)) {
-			if(!lista_insertar_final(nl, aux->dato))
-				return NULL;
+    while(aux != NULL) {
+            
+        if(f(aux->dato, extra)) {
+			
+			lista_insertar_final(nl, aux->dato);
 
 			ant->sig = aux->sig;
 			free(aux);
@@ -241,7 +282,7 @@ void **lista_a_vector(const lista_t *l, size_t *n) {
 
 	nodo_t *nodo = l->prim;
 	while(nodo != NULL) {
-		void **aux_v = realloc(v, ++tam);
+		void **aux_v = realloc(v, (++tam) * sizeof(void*));
 		if(aux_v == NULL){
 			free(v);
 			return NULL;
@@ -285,10 +326,10 @@ bool lista_iterador_siguiente(lista_iterador_t *li) {
 	if(li->n == NULL)
 		return false;
 
-	if(li->n->sig == NULL) {
+	/*if(li->n->sig == NULL) {
 		li->n = NULL;
 		return false;
-	}
+	}*/ //que problema hay con que sea NULL?
 
 	li->ant = li->n;
 	li->n = li->n->sig;
@@ -298,10 +339,7 @@ bool lista_iterador_siguiente(lista_iterador_t *li) {
 
 bool lista_iterador_termino(const lista_iterador_t *li) {
 
-	if(li->n == NULL)
-		return true;
-
-	return false;
+	return li->n == NULL;
 }
 
 void *lista_iterador_eliminar(lista_iterador_t *li) {
@@ -325,6 +363,12 @@ void *lista_iterador_eliminar(lista_iterador_t *li) {
 }
 
 bool lista_iterador_insertar(lista_iterador_t *li, void *dato) {
+
+	if(lista_es_vacia(li->l)) {
+		lista_insertar_comienzo(li->l, dato);
+		return true;
+	}
+
 
 	if(li->n == NULL)
 		return false;
