@@ -1,7 +1,9 @@
 #include <SDL2/SDL.h>
 
+#include "config.h"
 #include "lista.h"
 #include "graficador.h"
+#include "nave.h"
 
 int main() {
 	SDL_Init(SDL_INIT_VIDEO);
@@ -17,6 +19,7 @@ int main() {
 
 	// BEGIN código del alumno
 	graficador_inicializar("sprites.bin", renderer);
+	nave_t *nave = nave_crear();
 	// END código del alumno
 
 	unsigned int ticks = SDL_GetTicks();
@@ -28,12 +31,15 @@ int main() {
 				// BEGIN código del alumno
 				switch(event.key.keysym.sym) {
 					case SDLK_UP:
+						nave_impulso(nave);
 						break;
 					case SDLK_DOWN:
 						break;
 					case SDLK_RIGHT:
+						nave_incrementar_angulo(nave, -NAVE_ROTACION_PASO);
 						break;
 					case SDLK_LEFT:
+						nave_incrementar_angulo(nave, NAVE_ROTACION_PASO);
 						break;
 				}
 				// END código del alumno
@@ -48,7 +54,8 @@ int main() {
 
 
 		// BEGIN código del alumno
-		graficador_dibujar("SHIP", 3, 500, 300, 1);
+		nave_mover(nave, 0.001);
+		nave_dibujar(nave);
 		// END código del alumno
 
 
@@ -64,6 +71,7 @@ int main() {
 	}
 
 	// BEGIN código del alumno
+	nave_destruir(nave);
 	graficador_finalizar();
 	// END código del alumno
 

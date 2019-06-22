@@ -4,7 +4,7 @@ LFLAGS := -lm -lSDL2
 
 all: asteroids
 
-main.o: main.c graficador.h lista.h vectores.h
+main.o: main.c graficador.h lista.h vectores.h nave.h config.h
 	$(CC) $(CFLAGS) main.c
 
 lista.o: lista.c lista.h
@@ -13,12 +13,17 @@ lista.o: lista.c lista.h
 graficador.o: graficador.c graficador.h
 	$(CC) $(CFLAGS) graficador.c
 
-vectores.o: vectores.h
+vectores.o: vectores.c vectores.h
 	$(CC) $(CFLAGS) vectores.c
 
-graficador.h: lista.h vectores.h
+graficador.h: lista.h vectores.h config.h
 
-asteroids: main.o lista.o graficador.o vectores.o
+nave.o: nave.c nave.h
+	$(CC) $(CFLAGS) nave.c
+
+nave.h: graficador.h config.h
+
+asteroids: main.o lista.o graficador.o vectores.o nave.o
 	$(CC) $^ -o asteroids $(LFLAGS)
 
 clean:

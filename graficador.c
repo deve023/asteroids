@@ -43,11 +43,11 @@ bool graficador_inicializar(const char *fn, SDL_Renderer *r) {
     }
 
     while(!feof(fp)) {
-        
-        
+
+
         sprite_t *s = sprite_crear();
         if(s == NULL){
-            
+
             lista_destruir(ls, sprite_destruir);
             fclose(fp);
             return false;
@@ -58,7 +58,7 @@ bool graficador_inicializar(const char *fn, SDL_Renderer *r) {
 
         s->coords = malloc(sizeof(float *) * s->n);
         if(s->coords == NULL) {
-            
+
             free(s);
             lista_destruir(ls, sprite_destruir);
             fclose(fp);
@@ -69,7 +69,7 @@ bool graficador_inicializar(const char *fn, SDL_Renderer *r) {
             (s->coords)[i] = malloc(sizeof(float) * 2);
             if((s->coords)[i] == NULL) {
                 sprite_destruir(s);
-                lista_destruir(ls, sprite_destruir); //Si llega a entrar aca, va a liberar memoria de mas, pero esta bien, no?
+                lista_destruir(ls, sprite_destruir);
                 fclose(fp);
                 return false;
             }
@@ -109,14 +109,14 @@ bool graficador_dibujar(const char *nombre, float escala, float x, float y, floa
     //vector_rotar(s->coords, s->n, angulo);
     for(size_t i = 0; i < (s->n) - 1; i++)
     {
-            
+
             //printf("%f\n",s->coords[i][0]);
 			SDL_RenderDrawLine(
 				renderer,
 				(s->coords)[i][0] + x,
 				-(s->coords)[i][1] + y,
 				(s->coords)[i+1][0] + x,
-				-(s->coords)[i+1][1] + y 
+				-(s->coords)[i+1][1] + y
 			);
     }
     //vector_rotar(s->coords, s->n, -angulo);
