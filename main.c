@@ -22,6 +22,10 @@ int main() {
 	// BEGIN código del alumno
 	graficador_inicializar("sprites.bin", renderer);
 	nave_t *nave = nave_crear();
+	if(nave == NULL) {
+		graficador_finalizar();
+		return 1;
+	}
 	// END código del alumno
 
 	unsigned int ticks = SDL_GetTicks();
