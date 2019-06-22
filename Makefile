@@ -29,7 +29,10 @@ nave.h: graficador.h config.h
 asteroide.o: asteroide.c asteroide.h
 	$(CC) $(CFLAGS) asteroide.c
 
-asteroids: main.o lista.o graficador.o vectores.o fisica.o nave.o asteroide.o
+disparo.o: disparo.c disparo.h
+	$(CC) $(CFLAGS) disparo.c
+
+asteroids: main.o lista.o graficador.o vectores.o fisica.o nave.o asteroide.o disparo.o
 	$(CC) $^ -o asteroids $(LFLAGS)
 
 clean:

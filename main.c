@@ -1,11 +1,14 @@
 #include <SDL2/SDL.h>
+#include <time.h>
 
 #include "config.h"
 #include "lista.h"
 #include "graficador.h"
 #include "nave.h"
 #include "asteroide.h"
-#include "time.h"
+#include "disparo.h"
+
+
 
 #define DT (1.0 / JUEGO_FPS)
 
@@ -32,6 +35,7 @@ int main() {
 	}
 
 	asteroide_t * asteroide = asteroide_crear(300, 400, 32);
+	disparo_t * disparo;
 
 	// END código del alumno
 
@@ -54,6 +58,9 @@ int main() {
 					case SDLK_LEFT:
 						nave_incrementar_angulo(nave, NAVE_ROTACION_PASO);
 						break;
+					case SDLK_SPACE:
+						disparo = disparo_crear(nave_get_x(nave), nave_get_y(nave), nave_get_angulo(nave));
+						break;
 				}
 				// END código del alumno
 
@@ -73,8 +80,11 @@ int main() {
 		if(asteroide_colision(asteroide, nave_get_x(nave), nave_get_y(nave)))
 			return 0;
 
+		disparo_mover(disparo, DT);
+
 		nave_dibujar(nave);
 		asteroide_dibujar(asteroide);
+		disparo_dibujar(disparo);
 		// END código del alumno
 
 
