@@ -9,25 +9,25 @@ struct nave {
     float potencia;
 };
 
-nave_t *nave_crear() {
+nave_t *nave_crear(float x, float y, float angulo) {
     nave_t *n = malloc(sizeof(nave_t));
     if(n == NULL)
         return NULL;
 
-    n->x = NAVE_X_INICIAL;
-    n->y = NAVE_Y_INICIAL;
+    n->x = x;
+    n->y = y;
 
     n->vx = NAVE_VX_INICIAL;
     n->vy = NAVE_VY_INICIAL;
 
-    n->angulo = NAVE_ANGULO_INICIAL;
+    n->angulo = angulo;
     n->potencia = NAVE_POTENCIA_INICIAL;
 
     return n;
 }
 
-void nave_destruir(nave_t *n) {
-    free(n);
+void nave_destruir(void *n) {
+    free((nave_t*)n);
 }
 
 float nave_get_x(const nave_t *n) {

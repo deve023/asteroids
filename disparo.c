@@ -27,9 +27,9 @@ disparo_t *disparo_crear(float x, float y, float angulo)
 	return d;
 }
 
-void disparo_destruir(disparo_t * d)
+void disparo_destruir(void *d)
 {
-	free(d);
+	free((disparo_t*)d);
 }
 
 void disparo_mover(disparo_t * d, float dt)

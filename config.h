@@ -26,4 +26,6 @@
 
 #define DISPARO_VELOCIDAD 1000
 
+#define VIDAS_CANT_INICIAL 2
+
 #endif // _CONFIG_H_

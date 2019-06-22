@@ -40,9 +40,9 @@ asteroide_t *asteroide_crear(float x, float y, float radio)
     return a;
 }
 
-void asteroide_destruir(asteroide_t * a)
+void asteroide_destruir(void * a)
 {
-	free(a);
+	free((asteroide_t*)a);
 }
 
 void asteroide_mover(asteroide_t * a, float dt)
