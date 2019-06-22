@@ -106,20 +106,20 @@ bool graficador_dibujar(const char *nombre, float escala, float x, float y, floa
     if(s == NULL)
         return false;
 
-    //vector_rotar(s->coords, s->n, angulo);
+    vector_rotar(s->coords, s->n, angulo);
     for(size_t i = 0; i < (s->n) - 1; i++)
     {
 
             //printf("%f\n",s->coords[i][0]);
 			SDL_RenderDrawLine(
 				renderer,
-				(s->coords)[i][0] + x,
-				-(s->coords)[i][1] + y,
-				(s->coords)[i+1][0] + x,
-				-(s->coords)[i+1][1] + y
+				(s->coords)[i][0] * escala + x,
+				-(s->coords)[i][1] * escala + y,
+				(s->coords)[i+1][0] * escala + x,
+				-(s->coords)[i+1][1] * escala + y
 			);
     }
-    //vector_rotar(s->coords, s->n, -angulo);
+    vector_rotar(s->coords, s->n, -angulo);
 
     return true;
 }

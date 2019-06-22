@@ -5,6 +5,7 @@
 
 #include "config.h"
 #include "graficador.h"
+#include "fisica.h"
 
 #define NAVE_SPRITE "SHIP"
 #define CHORRO_SPRITE "THURST"

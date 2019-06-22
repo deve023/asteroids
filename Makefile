@@ -16,6 +16,9 @@ graficador.o: graficador.c graficador.h
 vectores.o: vectores.c vectores.h
 	$(CC) $(CFLAGS) vectores.c
 
+fisica.o: fisica.c fisica.h
+	$(CC) $(CFLAGS) fisica.c
+
 graficador.h: lista.h vectores.h config.h
 
 nave.o: nave.c nave.h
@@ -23,7 +26,10 @@ nave.o: nave.c nave.h
 
 nave.h: graficador.h config.h
 
-asteroids: main.o lista.o graficador.o vectores.o nave.o
+asteroide.o: asteroide.c asteroide.h
+	$(CC) $(CFLAGS) asteroide.c
+
+asteroids: main.o lista.o graficador.o vectores.o fisica.o nave.o asteroide.o
 	$(CC) $^ -o asteroids $(LFLAGS)
 
 clean:

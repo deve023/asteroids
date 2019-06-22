@@ -4,6 +4,8 @@
 #include "lista.h"
 #include "graficador.h"
 #include "nave.h"
+#include "asteroide.h"
+#include "time.h"
 
 #define DT (1.0 / JUEGO_FPS)
 
@@ -20,12 +22,17 @@ int main() {
 	int dormir = 0;
 
 	// BEGIN código del alumno
+	srand(time(NULL));
+
 	graficador_inicializar("sprites.bin", renderer);
 	nave_t *nave = nave_crear();
 	if(nave == NULL) {
 		graficador_finalizar();
 		return 1;
 	}
+
+	asteroide_t * asteroide = asteroide_crear(300, 400, 32);
+
 	// END código del alumno
 
 	unsigned int ticks = SDL_GetTicks();
@@ -61,7 +68,13 @@ int main() {
 
 		// BEGIN código del alumno
 		nave_mover(nave, DT);
+		
+		asteroide_mover(asteroide, DT);
+		if(asteroide_colision(asteroide, nave_get_x(nave), nave_get_y(nave)))
+			return 0;
+
 		nave_dibujar(nave);
+		asteroide_dibujar(asteroide);
 		// END código del alumno
 
 

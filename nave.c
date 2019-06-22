@@ -51,17 +51,18 @@ void nave_impulso(nave_t *n) {
 
 void nave_mover(nave_t *n, float dt) {
 
-    n->vx += n->potencia * cos(n->angulo) * dt;
-    n->vy -= n->potencia * sin(n->angulo) * dt;
+    n->vx = computar_velocidad(n->vx, n->potencia*cos(n->angulo), dt);
+    n->vy = computar_velocidad(n->vy, -n->potencia*sin(n->angulo), dt);
 
-    n->vx -= n->vx * NAVE_VELOCIDAD_DECREC;
-    n->vy -= n->vy * NAVE_VELOCIDAD_DECREC;
+    n->vx *= 1 - NAVE_VELOCIDAD_DECREC;
+    n->vy *= 1 - NAVE_VELOCIDAD_DECREC;
 
-    n->x += n->vx * dt;
-    n->y += n->vy * dt;
+    n->x = computar_posicion(n->x, n->vx, dt);
+    n->y = computar_posicion(n->y, n->vy, dt);
+
     graficador_ajustar_variables(&(n->x), &(n->y));
 
-    n->potencia *= (1 - NAVE_POTENCIA_DECREC);
+    n->potencia *= 1 - NAVE_POTENCIA_DECREC;
 }
 
 bool nave_dibujar(const nave_t *n) {
