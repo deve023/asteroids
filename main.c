@@ -31,15 +31,15 @@ int main() {
 	srand(time(NULL));
 
 	graficador_inicializar("sprites.bin", renderer);
-	nave_t *nave = nave_crear(NAVE_X_INICIAL, NAVE_Y_INICIAL, NAVE_ANGULO_INICIAL);
+
+	nave_t *nave = nave_crear(NAVE_X_INICIAL, NAVE_Y_INICIAL, NAVE_ANGULO_INICIAL); //creo nave 
 	if(nave == NULL) {
 		graficador_finalizar();
 		return 1;
 	}
 	
-	lista_t * lista_disp = lista_crear();
-	lista_t * lista_ast = lista_crear();
-	lista_t * lista_vidas = lista_crear();
+	lista_t * lista_disp = lista_crear(); //creo lista de disparos (validar)
+	lista_t * lista_ast = lista_crear(); //creo lista de asteroides (validar)
 
 
 	//creo 4 asteroides
@@ -48,16 +48,16 @@ int main() {
 		lista_insertar_final(lista_ast, asteroide_crear(0, 0, 32)); //hay que hacerlo random
 	}
 
-	size_t vidas = VIDAS_CANT_INICIAL;
-	for(size_t i = 0; i < vidas; i++)
-	{
-		lista_insertar_final(lista_vidas, nave_crear(100+15*i, VENTANA_ALTO-100, PI/2));
-	}
+	//variables del juego:
 
+	int vidas = VIDAS_CANT_INICIAL;
+	
 	bool nave_murio = false;
-	float nave_espera = 0;
 
-	bool game_over = false;
+	float nave_espera = 0; //tiempo que espero para crear la nave despues de morir
+
+	bool nave_creacion_colision = false; //me dice si en el lugar de aparicion de la nave hay asteroides
+
 	// END código del alumno
 
 	unsigned int ticks = SDL_GetTicks();
@@ -85,17 +85,17 @@ int main() {
 							lista_disp, 
 							disparo_crear(nave_get_x(nave), nave_get_y(nave), nave_get_angulo(nave))
 							);
-						if(game_over)
+						if(vidas == 0)
 						{
 							nave = nave_crear(NAVE_X_INICIAL, NAVE_Y_INICIAL, NAVE_ANGULO_INICIAL);
-							for(size_t i = 0; i < vidas; i++)
-							{
-								lista_insertar_final(lista_vidas, nave_crear(100+15*i, VENTANA_ALTO-100, PI/2));
-							}
+							nave_murio = false;
+							vidas = VIDAS_CANT_INICIAL;
 							lista_destruir(lista_ast, asteroide_destruir);
 							lista_ast = lista_crear();
-							
-							game_over = false;
+							for(size_t i = 0; i < 4; i++)
+							{
+								lista_insertar_final(lista_ast, asteroide_crear(0, 0, 32)); //hay que hacerlo random
+							}
 						}
 						break;
 				}
@@ -112,16 +112,46 @@ int main() {
 
 		// BEGIN código del alumno
 
-		
-
-		if(game_over)
+      	//esto pasa solo en game over
+        if(vidas == 0)
 		{
-			cadena_graficar("GAME OVER", 450, 400, 2, renderer);
+			cadena_graficar("GAME OVER", 400, 300, 4, renderer);
 		}
 		
-		
+		//esto pasa solo durante la partida
+		if(vidas != 0)
+		{
+	        if(!nave_murio) //si la nave esta viva la muevo y la grafico
+			{
+				nave_mover(nave, DT);
+				nave_dibujar(nave);
+			}
+	        
+	        if(nave_murio) //si la nave esta muerta sumo tiempo de espera
+	        {
+				nave_espera += DT;	
+	        }
+	        
+	        //si llego el tiempo de que la nave aparezca:
+
+	        if(nave_creacion_colision == true) //si hay colision reseteo el contador para esperar un segundo mas
+			{
+				nave_espera = 0;
+				nave_creacion_colision = false;
+
+			}
+			if(nave_creacion_colision == false && nave_espera >=1) //si no hay colision creo la nave
+			{
+				nave = nave_crear(NAVE_X_INICIAL, NAVE_Y_INICIAL, NAVE_ANGULO_INICIAL);
+				nave_espera = 0;
+				nave_murio = false;
+			}
+		}
 
 
+		//todo lo siguiente pasa durante la partida y game over
+
+		//ITERADOR ASTEROIDES:
 		//recorre la lista de asteroides moviendo y dibujando cada uno, y chequeando colision con la nave
         lista_iterador_t * iter_ast = lista_iterador_crear(lista_ast);
 		for(
@@ -129,33 +159,31 @@ int main() {
 			!lista_iterador_termino(iter_ast);
 			lista_iterador_siguiente(iter_ast)
 		){
-			asteroide_t * a = lista_iterador_actual(iter_ast);
-			asteroide_mover(a, DT);
-			if(asteroide_colision(a, nave_get_x(nave), nave_get_y(nave)))
+			asteroide_t * a = lista_iterador_actual(iter_ast);//obtengo asteroide actual
+			asteroide_mover(a, DT); //muevo el asteroide actual
+			asteroide_dibujar(a); //dibujo el asteroide actual
+
+			//si la nave esta viva veo si se choca con un asteroide
+			if(!nave_murio && asteroide_colision(a, nave_get_x(nave), nave_get_y(nave)))
 			{
-				lista_extraer_ultimo(lista_vidas);
+				vidas --;
 				nave_destruir(nave);
 				nave_murio = true;
-				//return 0; //lol
 			}
-			if(lista_es_vacia(lista_vidas))
-			{
-				game_over = true;
-			}
-			if(nave_murio && !game_over && nave_espera >= 1)
+			//si la nave esta muerta y es tiempo de aparecer, veo si hay colision en el lugar de spawn
+			if(nave_murio && vidas!=0 && nave_espera >= 1)
 			{
 				nave_espera = 0;
-				if(!asteroide_colision(a,NAVE_X_INICIAL,NAVE_Y_INICIAL))
+				if(asteroide_colision(a,NAVE_X_INICIAL,NAVE_Y_INICIAL))
 				{
-					nave = nave_crear(NAVE_X_INICIAL, NAVE_Y_INICIAL, NAVE_ANGULO_INICIAL);
-					nave_murio = false;
+					nave_creacion_colision = true;
 				}
-			}
-			asteroide_dibujar(a);
+			}	
 		}
 		lista_iterador_destruir(iter_ast);
 
 
+		//ITERADOR DISPAROS
 		//recorre la lista de disparos moviendo y dibujando cada uno, 
 		//elimina a los que tienen mas de 0.7 segundos de vida
 		lista_iterador_t * iter_disp = lista_iterador_crear(lista_disp);
@@ -172,32 +200,19 @@ int main() {
 		}
 		lista_iterador_destruir(iter_disp);
 
-		lista_iterador_t * iter_vidas = lista_iterador_crear(lista_vidas);
-		for(
-			iter_vidas = lista_iterador_crear(lista_vidas);
-			!lista_iterador_termino(iter_vidas);
-			lista_iterador_siguiente(iter_vidas)
-		){
-			nave_t * v = lista_iterador_actual(iter_vidas);
-			nave_dibujar(v);
-		}
-		lista_iterador_destruir(iter_vidas);
 
-		printf("x: %f\n y: %f\n", nave_get_x(nave), nave_get_y(nave));
-
-		if(!nave_murio)
+		//grafica las vidas en la parte superior izquierda de la pantalla
+		for(size_t i = 0; i < vidas; i++)
 		{
-			nave_mover(nave, DT);
-			nave_dibujar(nave);
-		}
-
-		if(nave_murio)
-		{
-			nave_espera += DT;
+			graficador_dibujar(NAVE_SPRITE, NAVE_ESCALA, 100+15*i, VENTANA_ALTO-100, PI/2);
 		}
 
 
-		
+
+
+
+
+
 
 		// END código del alumno
 

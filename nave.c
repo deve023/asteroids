@@ -66,11 +66,11 @@ void nave_mover(nave_t *n, float dt) {
 }
 
 bool nave_dibujar(const nave_t *n) {
-    bool dibuja_nave = graficador_dibujar(NAVE_SPRITE, ESCALA_NAVE, n->x, n->y, n->angulo);
+    bool dibuja_nave = graficador_dibujar(NAVE_SPRITE, NAVE_ESCALA, n->x, n->y, n->angulo);
 
     bool dibuja_chorro; 
     if(n->potencia > 1)
-        dibuja_chorro = graficador_dibujar(CHORRO_SPRITE, ESCALA_NAVE, n->x, n->y, n->angulo); 
+        dibuja_chorro = graficador_dibujar(CHORRO_SPRITE, NAVE_ESCALA, n->x, n->y, n->angulo); 
     else dibuja_chorro = true;
 
     return dibuja_nave && dibuja_chorro;

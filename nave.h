@@ -10,7 +10,7 @@
 #define NAVE_SPRITE "SHIP"
 #define CHORRO_SPRITE "THURST"
 
-#define ESCALA_NAVE 1
+#define NAVE_ESCALA 1
 
 struct nave;
 typedef struct nave nave_t;
