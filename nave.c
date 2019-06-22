@@ -52,7 +52,7 @@ void nave_impulso(nave_t *n) {
 void nave_mover(nave_t *n, float dt) {
 
     n->vx = computar_velocidad(n->vx, n->potencia*cos(n->angulo), dt);
-    n->vy = computar_velocidad(n->vy, -n->potencia*sin(n->angulo), dt);
+    n->vy = computar_velocidad(n->vy, n->potencia*sin(n->angulo), dt);
 
     n->vx *= 1 - NAVE_VELOCIDAD_DECREC;
     n->vy *= 1 - NAVE_VELOCIDAD_DECREC;

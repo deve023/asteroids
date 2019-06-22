@@ -8,6 +8,8 @@ typedef struct sprite {
 
 static SDL_Renderer *renderer;
 
+static int w, h;
+
 //Lista con los sprites
 static lista_t *ls;
 
@@ -82,6 +84,7 @@ bool graficador_inicializar(const char *fn, SDL_Renderer *r) {
     fclose(fp);
 
     renderer = r;
+    SDL_GetRendererOutputSize(renderer, &w, &h);
 
     return true;
 }
@@ -90,8 +93,7 @@ void graficador_finalizar() {
 }
 
 void graficador_ajustar_variables(float *x, float *y) {
-    int w, h;
-    SDL_GetRendererOutputSize(renderer, &w, &h);
+    
 
     //creo que esto se acerca mas a lo que pide santisi
     if(*x > w)
@@ -122,9 +124,9 @@ bool graficador_dibujar(const char *nombre, float escala, float x, float y, floa
 			SDL_RenderDrawLine(
 				renderer,
 				(s->coords)[i][0] * escala + x,
-				-(s->coords)[i][1] * escala + y,
+				-(s->coords)[i][1] * escala - y + h,
 				(s->coords)[i+1][0] * escala + x,
-				-(s->coords)[i+1][1] * escala + y
+				-(s->coords)[i+1][1] * escala - y + h
 			);
     }
     vector_rotar(s->coords, s->n, -angulo);

@@ -125,7 +125,7 @@ int main() {
 		}
 		lista_iterador_destruir(iter_disp);
 
-
+		printf("x: %f\n y: %f\n", nave_get_x(nave), nave_get_y(nave));
 
 
 

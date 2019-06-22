@@ -20,7 +20,7 @@ disparo_t *disparo_crear(float x, float y, float angulo)
 	d->angulo = angulo;
 
 	d->vx = DISPARO_VELOCIDAD * cos(angulo);
-	d->vy = -DISPARO_VELOCIDAD * sin(angulo);
+	d->vy = DISPARO_VELOCIDAD * sin(angulo);
 
 	d->tiempo = 0;
 
