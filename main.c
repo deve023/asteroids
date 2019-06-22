@@ -43,7 +43,7 @@ int main() {
 
 
 	//creo 4 asteroides
-	for(size_t i = 0; i < 4; i++)
+	for(size_t i = 0; i < 10; i++)
 	{
 		lista_insertar_final(lista_ast, asteroide_crear(0, 0, 32)); //hay que hacerlo random
 	}
@@ -92,7 +92,7 @@ int main() {
 							vidas = VIDAS_CANT_INICIAL;
 							lista_destruir(lista_ast, asteroide_destruir);
 							lista_ast = lista_crear();
-							for(size_t i = 0; i < 4; i++)
+							for(size_t i = 0; i < 10; i++)
 							{
 								lista_insertar_final(lista_ast, asteroide_crear(0, 0, 32)); //hay que hacerlo random
 							}
@@ -134,9 +134,10 @@ int main() {
 	        
 	        //si llego el tiempo de que la nave aparezca:
 
-	        if(nave_creacion_colision == true) //si hay colision reseteo el contador para esperar un segundo mas
+	        if(nave_creacion_colision == true) //si hay colision reseteo el contador para esperar 0.1 segundos mas
 			{
-				nave_espera = 0;
+				puts("*");
+				nave_espera = 0.9;
 				nave_creacion_colision = false;
 
 			}
