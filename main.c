@@ -5,6 +5,8 @@
 #include "graficador.h"
 #include "nave.h"
 
+#define DT (1.0 / JUEGO_FPS)
+
 int main() {
 	SDL_Init(SDL_INIT_VIDEO);
 
@@ -13,7 +15,7 @@ int main() {
 	SDL_Event event;
 
 	SDL_CreateWindowAndRenderer(VENTANA_ANCHO, VENTANA_ALTO, 0, &window, &renderer);
-	SDL_SetWindowTitle(window, "Lunar Lander");
+	SDL_SetWindowTitle(window, "Asteroids");
 
 	int dormir = 0;
 
@@ -54,7 +56,7 @@ int main() {
 
 
 		// BEGIN código del alumno
-		nave_mover(nave, 0.001);
+		nave_mover(nave, DT);
 		nave_dibujar(nave);
 		// END código del alumno
 
@@ -65,8 +67,8 @@ int main() {
 			SDL_Delay(dormir);
 			dormir = 0;
 		}
-		else if(ticks < 1000 / 100)
-			SDL_Delay(1000 / 100 - ticks);
+		else if(ticks < 1000 / JUEGO_FPS)
+			SDL_Delay(1000 / JUEGO_FPS - ticks);
 		ticks = SDL_GetTicks();
 	}
 
