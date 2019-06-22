@@ -45,8 +45,11 @@ void nave_impulso(nave_t *n) {
 
 void nave_mover(nave_t *n, float dt) {
 
-    (n->velocidad)[0] += n->potencia * cos(n->angulo) * dt * (1 - NAVE_VELOCIDAD_DECREC);
-    (n->velocidad)[1] -= n->potencia * sin(n->angulo) * dt * (1 - NAVE_VELOCIDAD_DECREC);
+    (n->velocidad)[0] += n->potencia * cos(n->angulo) * dt;
+    (n->velocidad)[1] -= n->potencia * sin(n->angulo) * dt;
+
+    (n->velocidad)[0] -= (n->velocidad)[0] * NAVE_VELOCIDAD_DECREC;
+    (n->velocidad)[1] -= (n->velocidad)[1] * NAVE_VELOCIDAD_DECREC;
 
     (n->posicion)[0] += (n->velocidad)[0] * dt;
     (n->posicion)[1] += (n->velocidad)[1] * dt;
