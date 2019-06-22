@@ -16,11 +16,9 @@ char * asteroide_clases[4] = {
 	"ROCK1", "ROCK2", "ROCK3", "ROCK4"
 };
 
-static float rand_float_entre(float a, float b){
-	float rand_float = rand() / (float)RAND_MAX;
-	float l = b - a;
-	float r = rand_float * l;
-	return a + r;
+float randomf(float min, float max)
+{
+    return (float)rand()/RAND_MAX*(max-min)+min;
 }
 
 asteroide_t *asteroide_crear(float x, float y, float radio)
@@ -32,11 +30,11 @@ asteroide_t *asteroide_crear(float x, float y, float radio)
     a->x = x;
     a->y = y;
 
-    a->vx = rand_float_entre(1000/radio-100, 1000/radio+100);
-    a->vy = rand_float_entre(1000/radio-100, 1000/radio+100);
+    a->vx = randomf(1000/radio-100, 1000/radio+100);
+    a->vy = randomf(1000/radio-100, 1000/radio+100);
 
     a->radio = radio;
-    a->angulo = rand_float_entre(-PI/2, PI/2);
+    a->angulo = randomf(-PI/2, PI/2);
 	a->clase = asteroide_clases[rand()%4];
     
     return a;

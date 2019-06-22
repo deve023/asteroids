@@ -8,7 +8,7 @@
 
 #include "config.h"
 #include "lista.h"
-#include "vectores.h"
+#include "vector.h"
 
 bool graficador_inicializar(const char *fn, SDL_Renderer *r);
 void graficador_finalizar();
