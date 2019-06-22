@@ -36,6 +36,7 @@ void disparo_mover(disparo_t * d, float dt)
 {
 	d->x = computar_posicion(d->x, d->vx, dt);
 	d->y = computar_posicion(d->y, d->vy, dt);
+	d->tiempo += dt;
 	graficador_ajustar_variables(&(d->x), &(d->y));
 }
 
@@ -55,3 +56,6 @@ float disparo_get_angulo(const disparo_t *d) {
     return d->angulo;
 }
 
+float disparo_get_tiempo(const disparo_t *d) {
+	return d->tiempo;
+}

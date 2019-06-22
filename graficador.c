@@ -90,15 +90,23 @@ void graficador_finalizar() {
 }
 
 void graficador_ajustar_variables(float *x, float *y) {
-    if(*x > VENTANA_ANCHO)
-        *x = 0;
-    else if(*x < 0)
-        *x = VENTANA_ANCHO;
+    int w, h;
+    SDL_GetRendererOutputSize(renderer, &w, &h);
 
-    if(*y > VENTANA_ALTO)
-        *y = 0;
+    //creo que esto se acerca mas a lo que pide santisi
+    if(*x > w)
+        *x = fmod(*x,w);
+    else if(*x == 0)
+        *x = w;
+    else if(*x < 0)
+        *x = w + fmod(*x,w);
+
+    if(*y > h)
+        *y = fmod(*y,h);
+    else if(*y == 0)
+        *y = h;
     else if(*y < 0)
-        *y = VENTANA_ALTO;
+        *y = h + fmod(*y,h);
 }
 
 bool graficador_dibujar(const char *nombre, float escala, float x, float y, float angulo) {

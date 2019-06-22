@@ -12,6 +12,8 @@
 
 #define DT (1.0 / JUEGO_FPS)
 
+
+
 int main() {
 	SDL_Init(SDL_INIT_VIDEO);
 
@@ -33,9 +35,16 @@ int main() {
 		graficador_finalizar();
 		return 1;
 	}
+	
+	lista_t * lista_disp = lista_crear();
+	lista_t * lista_ast = lista_crear();
 
-	asteroide_t * asteroide = asteroide_crear(300, 400, 32);
-	disparo_t * disparo;
+
+	//creo 4 asteroides
+	for(size_t i = 0; i < 4; i++)
+	{
+		lista_insertar_final(lista_ast, asteroide_crear(0, 0, 32)); //hay que hacerlo random
+	}
 
 	// END código del alumno
 
@@ -59,7 +68,11 @@ int main() {
 						nave_incrementar_angulo(nave, NAVE_ROTACION_PASO);
 						break;
 					case SDLK_SPACE:
-						disparo = disparo_crear(nave_get_x(nave), nave_get_y(nave), nave_get_angulo(nave));
+						//creo un disparo
+						lista_insertar_final(
+							lista_disp, 
+							disparo_crear(nave_get_x(nave), nave_get_y(nave), nave_get_angulo(nave))
+							);
 						break;
 				}
 				// END código del alumno
@@ -74,17 +87,49 @@ int main() {
 
 
 		// BEGIN código del alumno
-		nave_mover(nave, DT);
 		
-		asteroide_mover(asteroide, DT);
-		if(asteroide_colision(asteroide, nave_get_x(nave), nave_get_y(nave)))
-			return 0;
-
-		disparo_mover(disparo, DT);
-
+		//muevo y grafico la nave (no shit)
+		nave_mover(nave, DT);
 		nave_dibujar(nave);
-		asteroide_dibujar(asteroide);
-		disparo_dibujar(disparo);
+
+
+		//recorre la lista de asteroides moviendo y dibujando cada uno, y chequeando colision con la nave
+        lista_iterador_t * iter_ast = lista_iterador_crear(lista_ast);
+		for(
+			iter_ast = lista_iterador_crear(lista_ast);
+			!lista_iterador_termino(iter_ast);
+			lista_iterador_siguiente(iter_ast)
+		){
+			asteroide_t * a = lista_iterador_actual(iter_ast);
+			asteroide_mover(a, DT);
+			if(asteroide_colision(a, nave_get_x(nave), nave_get_y(nave)))
+				return 0; //lol
+			asteroide_dibujar(a);
+		}
+		lista_iterador_destruir(iter_ast);
+
+
+		//recorre la lista de disparos moviendo y dibujando cada uno, 
+		//elimina a los que tienen mas de 0.7 segundos de vida
+		lista_iterador_t * iter_disp = lista_iterador_crear(lista_disp);
+		for(
+			iter_disp = lista_iterador_crear(lista_disp);
+			!lista_iterador_termino(iter_disp);
+			lista_iterador_siguiente(iter_disp)
+		){
+			disparo_t * d = lista_iterador_actual(iter_disp);
+			if(disparo_get_tiempo(d) >= 0.7)
+				lista_iterador_eliminar(iter_disp);
+			disparo_mover(d, DT);
+			disparo_dibujar(d);
+		}
+		lista_iterador_destruir(iter_disp);
+
+
+
+
+
+
 		// END código del alumno
 
 

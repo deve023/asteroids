@@ -13,3 +13,4 @@ bool disparo_dibujar(disparo_t * d);
 float disparo_get_x(const disparo_t *d);
 float disparo_get_y(const disparo_t *d);
 float disparo_get_angulo(const disparo_t *d);
+float disparo_get_tiempo(const disparo_t *d);
