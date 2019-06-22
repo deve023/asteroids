@@ -17,8 +17,9 @@ typedef struct nave nave_t;
 nave_t *nave_crear();
 void nave_destruir(nave_t *n);
 
-float nave_get_pos_x(const nave_t *n);
-float nave_get_pos_y(const nave_t *n);
+float nave_get_x(const nave_t *n);
+float nave_get_y(const nave_t *n);
+float nave_get_angulo(const nave_t *n);
 
 void nave_incrementar_angulo(nave_t *n, float angulo);
 void nave_impulso(nave_t *n);
