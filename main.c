@@ -233,10 +233,12 @@ int main() {
 						score += 20;
 					}
 					disparo_destruir(lista_iterador_eliminar(iter_disp));
+
+					break;
 				}
 			}
 			lista_iterador_destruir(iter_disp);
-			
+
 			if(asteroide_destruido)
 				continue;
 
