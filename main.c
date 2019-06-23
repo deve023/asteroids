@@ -48,7 +48,7 @@ int main() {
 		return 1;
 	}
 
-	int asteroides_cant = ASTEROIDES_CANT_INCIAL; //partida a partida aumenta de a dos.
+	int asteroides_cant = ASTEROIDES_CANT_INICIAL; //partida a partida aumenta de a dos.
 	lista_t * lista_ast = inicializar_asteroides(asteroides_cant); //creo lista de asteroides.
 	if(lista_ast == NULL) {
 		graficador_finalizar();
@@ -109,7 +109,7 @@ int main() {
 							nave_murio = false;
 							vidas = VIDAS_CANT_INICIAL;
 							lista_destruir(lista_ast, asteroide_destruir);
-							asteroides_cant = ASTEROIDES_CANT_INCIAL; //reseteo la cantidad inicial de asteroides al comenzar nueva partida
+							asteroides_cant = ASTEROIDES_CANT_INICIAL; //reseteo la cantidad inicial de asteroides al comenzar nueva partida
 							lista_ast = inicializar_asteroides(asteroides_cant);
 							if(lista_ast == NULL) {
 								graficador_finalizar();
