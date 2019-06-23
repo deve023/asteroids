@@ -49,7 +49,7 @@ int main() {
 	}
 
 	int asteroides_cant = ASTEROIDES_CANT_INCIAL; //partida a partida aumenta de a dos.
-	lista_t * lista_ast = inicializar_asteroides(ASTEROIDES_CANT_INCIAL); //creo lista de asteroides, con 10 asteroides.
+	lista_t * lista_ast = inicializar_asteroides(asteroides_cant); //creo lista de asteroides.
 	if(lista_ast == NULL) {
 		graficador_finalizar();
 		nave_destruir(nave);
@@ -68,6 +68,7 @@ int main() {
 	bool nave_creacion_colision = false; //me dice si en el lugar de aparicion de la nave hay asteroides
 
 	int score = 0;
+
 	int best_score = 0;
 
 	// END código del alumno
@@ -108,7 +109,8 @@ int main() {
 							nave_murio = false;
 							vidas = VIDAS_CANT_INICIAL;
 							lista_destruir(lista_ast, asteroide_destruir);
-							lista_ast = inicializar_asteroides(ASTEROIDES_CANT_INCIAL);
+							asteroides_cant = ASTEROIDES_CANT_INCIAL; //reseteo la cantidad inicial de asteroides al comenzar nueva partida
+							lista_ast = inicializar_asteroides(asteroides_cant);
 							if(lista_ast == NULL) {
 								graficador_finalizar();
 								nave_destruir(nave);
@@ -326,7 +328,7 @@ lista_t *inicializar_asteroides(int n) {
 
 	float x, y; // Posicion incial de cada asteroide
 
-	//creo 10 asteroides
+	//creo n asteroides
 	for(size_t i = 0; i < n; i++)
 	{
 		int s = rand() % 2;
@@ -339,7 +341,7 @@ lista_t *inicializar_asteroides(int n) {
 			y = 0;
 		}
 
-		lista_insertar_final(lista_ast, asteroide_crear(x, y, 32)); //hay que hacerlo random
+		lista_insertar_final(lista_ast, asteroide_crear(x, y, 32));
 	}
 
 	return lista_ast;
