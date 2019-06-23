@@ -89,10 +89,10 @@ void cadena_graficar(char * cadena, float x, float y, float escala, SDL_Renderer
 {
 	size_t tam;
 	for(size_t i = 0; cadena[i]; i++)
-	{		
+	{
 		matriz_t matriz = caracter_a_matriz(cadena[i], &tam);
 		caracter_graficar(matriz, tam, x, y, escala, renderer);
-		x += CARACTER_ANCHO * escala;			
+		x += CARACTER_ANCHO * escala;
 	}
 }
 

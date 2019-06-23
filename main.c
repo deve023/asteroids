@@ -8,7 +8,7 @@
 #include "nave.h"
 #include "asteroide.h"
 #include "disparo.h"
-
+#include "matematica.h"
 
 #define DT (1.0 / JUEGO_FPS)
 
@@ -48,6 +48,7 @@ int main() {
 		return 1;
 	}
 
+	int asteroides_cant = ASTEROIDES_CANT_INCIAL; //partida a partida aumenta de a dos.
 	lista_t * lista_ast = inicializar_asteroides(ASTEROIDES_CANT_INCIAL); //creo lista de asteroides, con 10 asteroides.
 	if(lista_ast == NULL) {
 		graficador_finalizar();
@@ -65,6 +66,9 @@ int main() {
 	float nave_espera = 0; //tiempo que espero para crear la nave despues de morir
 
 	bool nave_creacion_colision = false; //me dice si en el lugar de aparicion de la nave hay asteroides
+
+	int score = 0;
+	int best_score = 0;
 
 	// END código del alumno
 
@@ -111,6 +115,7 @@ int main() {
 								lista_destruir(lista_disp, disparo_destruir);
 								return 1;
 							}
+							score = 0;
 						}
 						break;
 				}
@@ -131,6 +136,11 @@ int main() {
         if(vidas == 0)
 		{
 			cadena_graficar("GAME OVER", 400, 300, 4, renderer);
+
+			//actualizo el mejor puntaje si es necesario
+			if(score > best_score)
+				best_score = score;
+
 		}
 
 		//esto pasa solo durante la partida
@@ -168,7 +178,7 @@ int main() {
 		//todo lo siguiente pasa durante la partida y game over
 
 		//ITERADOR ASTEROIDES:
-		//recorre la lista de asteroides moviendo y dibujando cada uno, y chequeando colision con la nave
+		//recorre la lista de asteroides moviendo y dibujando cada uno, y chequeando colision con la nave y disparos
         lista_iterador_t * iter_ast = lista_iterador_crear(lista_ast);
 		for(
 			iter_ast = lista_iterador_crear(lista_ast);
@@ -178,6 +188,45 @@ int main() {
 			asteroide_t * a = lista_iterador_actual(iter_ast);//obtengo asteroide actual
 			asteroide_mover(a, DT); //muevo el asteroide actual
 			asteroide_dibujar(a); //dibujo el asteroide actual
+
+			//veo si el asteroide colisiona con algun disparo
+			lista_iterador_t *iter_disp = lista_iterador_crear(lista_disp);
+			for(
+				iter_disp = lista_iterador_crear(lista_disp);
+				!lista_iterador_termino(iter_disp);
+				lista_iterador_siguiente(iter_disp)
+			){
+				disparo_t *d = lista_iterador_actual(iter_disp);
+				if(asteroide_colision(a, disparo_get_x(d), disparo_get_y(d))) {
+
+					float x = asteroide_get_x(a);
+					float y = asteroide_get_y(a);
+
+					if(asteroide_get_radio(a) == 8) {
+						asteroide_destruir(lista_iterador_eliminar(iter_ast));
+
+						score += 100;
+					}
+
+					else if(asteroide_get_radio(a) == 16) {
+						lista_iterador_insertar(iter_ast, asteroide_crear(x, y, 8));
+						lista_iterador_insertar(iter_ast, asteroide_crear(x, y, 8));
+						asteroide_destruir(lista_iterador_eliminar(iter_ast));
+
+						score += 50;
+					}
+
+					else {
+						lista_iterador_insertar(iter_ast, asteroide_crear(x, y, 16));
+						lista_iterador_insertar(iter_ast, asteroide_crear(x, y, 16));
+						asteroide_destruir(lista_iterador_eliminar(iter_ast));
+
+						score += 20;
+					}
+					disparo_destruir(lista_iterador_eliminar(iter_disp));
+				}
+			}
+			lista_iterador_destruir(iter_disp);
 
 			//si la nave esta viva veo si se choca con un asteroide
 			if(!nave_murio && asteroide_colision(a, nave_get_x(nave), nave_get_y(nave)))
@@ -190,7 +239,7 @@ int main() {
 			if(nave_murio && vidas!=0 && nave_espera >= 1)
 			{
 				nave_espera = 0;
-				if(asteroide_colision(a,NAVE_X_INICIAL,NAVE_Y_INICIAL))
+				if(asteroide_colision(a, NAVE_X_INICIAL, NAVE_Y_INICIAL))
 				{
 					nave_creacion_colision = true;
 				}
@@ -198,6 +247,18 @@ int main() {
 		}
 		lista_iterador_destruir(iter_ast);
 
+		//veo si murieron todos los asteroides
+		if(lista_es_vacia(lista_ast)) {
+			free(lista_ast);
+			asteroides_cant += 2;
+			lista_ast = inicializar_asteroides(asteroides_cant); //creo lista de asteroides, con 10 asteroides.
+			if(lista_ast == NULL) {
+				graficador_finalizar();
+				nave_destruir(nave);
+				lista_destruir(lista_disp, disparo_destruir);
+				return 1;
+			}
+		}
 
 		//ITERADOR DISPAROS
 		//recorre la lista de disparos moviendo y dibujando cada uno,
@@ -223,9 +284,11 @@ int main() {
 			graficador_dibujar(NAVE_SPRITE, NAVE_ESCALA, 100+15*i, VENTANA_ALTO-100, PI/2);
 		}
 
+		//grafico el puntaje en la parte superior izquierda de la pantalla
+		contador_graficar_derecha(score, 4, 75, 75, 3, renderer);
 
-
-
+		//grafico el mejor puntaje en el centro superior de la pantalla
+		contador_graficar_ceros(best_score, 4, VENTANA_ANCHO / 2, 75, 2, renderer);
 
 
 
