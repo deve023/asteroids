@@ -82,22 +82,28 @@ int main() {
 				// BEGIN código del alumno
 				switch(event.key.keysym.sym) {
 					case SDLK_UP:
-						nave_impulso(nave);
+						if(!nave_murio)
+							nave_impulso(nave);
 						break;
 					case SDLK_DOWN:
 						break;
 					case SDLK_RIGHT:
-						nave_incrementar_angulo(nave, -NAVE_ROTACION_PASO);
+						if(!nave_murio)
+							nave_incrementar_angulo(nave, -NAVE_ROTACION_PASO);
 						break;
 					case SDLK_LEFT:
-						nave_incrementar_angulo(nave, NAVE_ROTACION_PASO);
+						if(!nave_murio)
+							nave_incrementar_angulo(nave, NAVE_ROTACION_PASO);
 						break;
 					case SDLK_SPACE:
 						//creo un disparo
+						if(!nave_murio)
+						{
 						lista_insertar_final(
 							lista_disp,
 							disparo_crear(nave_get_x(nave), nave_get_y(nave), nave_get_angulo(nave))
 							);
+						}
 						if(vidas == 0)
 						{
 							nave = nave_crear(NAVE_X_INICIAL, NAVE_Y_INICIAL, NAVE_ANGULO_INICIAL);
