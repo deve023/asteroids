@@ -93,9 +93,7 @@ void graficador_finalizar() {
 }
 
 void graficador_ajustar_variables(float *x, float *y) {
-    
 
-    //creo que esto se acerca mas a lo que pide santisi
     if(*x > w)
         *x = fmod(*x,w);
     else if(*x == 0)
@@ -119,8 +117,6 @@ bool graficador_dibujar(const char *nombre, float escala, float x, float y, floa
     vector_rotar(s->coords, s->n, angulo);
     for(size_t i = 0; i < (s->n) - 1; i++)
     {
-
-            //printf("%f\n",s->coords[i][0]);
 			SDL_RenderDrawLine(
 				renderer,
 				(s->coords)[i][0] * escala + x,

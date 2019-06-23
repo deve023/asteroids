@@ -4,6 +4,7 @@
 
 #include <math.h>
 
+#include "matematica.h"
 
 typedef struct asteroide asteroide_t;
 

@@ -16,11 +16,6 @@ char * asteroide_clases[4] = {
 	"ROCK1", "ROCK2", "ROCK3", "ROCK4"
 };
 
-float randomf(float min, float max)
-{
-    return (float)rand()/RAND_MAX*(max-min)+min;
-}
-
 asteroide_t *asteroide_crear(float x, float y, float radio)
 {
     asteroide_t *a = malloc(sizeof(asteroide_t));
@@ -36,7 +31,7 @@ asteroide_t *asteroide_crear(float x, float y, float radio)
     a->radio = radio;
     a->angulo = randomf(-PI/2, PI/2);
 	a->clase = asteroide_clases[rand()%4];
-    
+
     return a;
 }
 
@@ -71,5 +66,3 @@ float asteroide_get_y(const asteroide_t *a) {
 float asteroide_get_radio(const asteroide_t *a) {
     return a->radio;
 }
-
-

@@ -4,6 +4,8 @@
 
 #include <math.h>
 
+#define DISPARO_SPRITE "SHOT"
+
 typedef struct disparo disparo_t;
 
 disparo_t * disparo_crear(float x, float y, float angulo);

@@ -2,25 +2,7 @@
 #include "config.h"
 
 
-/*
-Recibe las coordenadas pertenecientes a los puntos p0 = (x0,y0) y p1 = (x1,y1)
-y un valor de la coordenada x.
-Dada la ecuacion de la recta formada por los puntos p0 y p1, devuelve
-el valor de la coordenada 'y' del punto de la recta cuya abscisa es x.
-*/
-static float calcular_y_recta(float x, float x0, float y0, float x1, float y1)
-{
-	return (y1-y0)/(x1-x0)*(x-x0)+y0;
-}
 
-/*
-Recibe dos numeros min y max.
-Devuelve un numero aleatorio perteneciente al intervalo [min,max].
-*/
-static float randomf(float min, float max)
-{
-	return (float)rand()/RAND_MAX*(max-min)+min;
-}
 
 /*
 Recibe dos variables p1 y p2 de tipo float **.
@@ -50,7 +32,7 @@ static bool vector_pedir_memoria(float *** v, size_t n)
 			vector_destruir(*v,i);
 			return false;
 		}
-			
+
 	}
 
 	return true;
@@ -62,12 +44,12 @@ void vector_rotar(float ** v, size_t n, double rad)
 	float x, y;
 	double coseno = cos(rad);
 	double seno = sin(rad);
-	
+
 	for(int i=0;i<n;i++)
 	{
 		x=v[i][0];
 		y=v[i][1];
-		
+
 		v[i][0]=x*coseno-y*seno;
 		v[i][1]=x*seno+y*coseno;
 	}
@@ -94,13 +76,13 @@ bool vector_esta_arriba(float ** v, int n, float x, float y)
 			float y1=v[i+1][1];
 
 			float y_recta = (y1-y0)/(x1-x0)*(x-x0)+y0;
-			
+
 			if(y>y_recta) return true;
 
 			break;
 		}
 	}
-	
+
 	return false;
 }
 
@@ -131,7 +113,7 @@ float ** vector_desde_matriz(const float m[][2], size_t n)
 float ** vector_densificar(float ** v, size_t nv, size_t nn, float margen)
 {
 	float ** v_nuevo = NULL;
-	
+
 	bool mem_exito = vector_pedir_memoria(&v_nuevo, nn);
 	if(mem_exito == false)
 		return NULL;
@@ -158,11 +140,11 @@ float ** vector_densificar(float ** v, size_t nv, size_t nn, float margen)
 	return v_nuevo;
 }
 
-float ** crear_terreno (size_t * n) 
+float ** crear_terreno (size_t * n)
 {
 	*n = 0;
 
-	const float terreno_estatico [][2] = 
+	const float terreno_estatico [][2] =
 	{
 		{0 , 100}, 							// izquierda
 		{ -1 , VENTANA_ALTO * 2.0 / 3} , 	// "medio"
@@ -171,14 +153,14 @@ float ** crear_terreno (size_t * n)
 
 	size_t nt = 3;
 	float ** terreno = vector_desde_matriz(terreno_estatico ,nt);
-	if(terreno == NULL) 
+	if(terreno == NULL)
 		return NULL;
 
 	// Asignamos la coordenada del medio aleatoriamente :
 	terreno [1][0] = rand() % VENTANA_ANCHO;
 
 	// Iterativamente densificamos 30 veces achicando el margen cada vez :
-	for (size_t i = 1; i < 30; i ++) 
+	for (size_t i = 1; i < 30; i ++)
 	{
 		float ** aux = vector_densificar(terreno, nt, 2 * (i + 5), 100 / i);
 		vector_destruir (terreno, nt);
@@ -225,7 +207,7 @@ float vector_interpolar(float **v, size_t n, float x)
 	for(i = 0; i < n-1; i++)
 	{
 		if(x <= v[i+1][0])
-			break; 
+			break;
 	}
 
 	return calcular_y_recta(x, v[i][0], v[i][1], v[i+1][0], v[i+1][1]);

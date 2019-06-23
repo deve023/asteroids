@@ -10,10 +10,11 @@
 #include "disparo.h"
 
 
-
 #define DT (1.0 / JUEGO_FPS)
 
 
+// Crea una lista con n asteroides.
+lista_t *inicializar_asteroides(int n);
 
 int main() {
 	SDL_Init(SDL_INIT_VIDEO);
@@ -30,28 +31,35 @@ int main() {
 	// BEGIN código del alumno
 	srand(time(NULL));
 
-	graficador_inicializar("sprites.bin", renderer);
+	if(!graficador_inicializar("sprites.bin", renderer))
+		return 1;
 
-	nave_t *nave = nave_crear(NAVE_X_INICIAL, NAVE_Y_INICIAL, NAVE_ANGULO_INICIAL); //creo nave 
+
+	nave_t *nave = nave_crear(NAVE_X_INICIAL, NAVE_Y_INICIAL, NAVE_ANGULO_INICIAL); //creo nave
 	if(nave == NULL) {
 		graficador_finalizar();
 		return 1;
 	}
-	
-	lista_t * lista_disp = lista_crear(); //creo lista de disparos (validar)
-	lista_t * lista_ast = lista_crear(); //creo lista de asteroides (validar)
 
+	lista_t * lista_disp = lista_crear(); //creo lista de disparos
+	if(lista_disp == NULL) {
+		graficador_finalizar();
+		nave_destruir(nave);
+		return 1;
+	}
 
-	//creo 4 asteroides
-	for(size_t i = 0; i < 10; i++)
-	{
-		lista_insertar_final(lista_ast, asteroide_crear(0, 0, 32)); //hay que hacerlo random
+	lista_t * lista_ast = inicializar_asteroides(ASTEROIDES_CANT_INCIAL); //creo lista de asteroides, con 10 asteroides.
+	if(lista_ast == NULL) {
+		graficador_finalizar();
+		nave_destruir(nave);
+		lista_destruir(lista_disp, disparo_destruir);
+		return 1;
 	}
 
 	//variables del juego:
 
 	int vidas = VIDAS_CANT_INICIAL;
-	
+
 	bool nave_murio = false;
 
 	float nave_espera = 0; //tiempo que espero para crear la nave despues de morir
@@ -82,19 +90,26 @@ int main() {
 					case SDLK_SPACE:
 						//creo un disparo
 						lista_insertar_final(
-							lista_disp, 
+							lista_disp,
 							disparo_crear(nave_get_x(nave), nave_get_y(nave), nave_get_angulo(nave))
 							);
 						if(vidas == 0)
 						{
 							nave = nave_crear(NAVE_X_INICIAL, NAVE_Y_INICIAL, NAVE_ANGULO_INICIAL);
+							if(nave == NULL) {
+								graficador_finalizar();
+								lista_destruir(lista_disp, disparo_destruir);
+								return 1;
+							}
 							nave_murio = false;
 							vidas = VIDAS_CANT_INICIAL;
 							lista_destruir(lista_ast, asteroide_destruir);
-							lista_ast = lista_crear();
-							for(size_t i = 0; i < 10; i++)
-							{
-								lista_insertar_final(lista_ast, asteroide_crear(0, 0, 32)); //hay que hacerlo random
+							lista_ast = inicializar_asteroides(ASTEROIDES_CANT_INCIAL);
+							if(lista_ast == NULL) {
+								graficador_finalizar();
+								nave_destruir(nave);
+								lista_destruir(lista_disp, disparo_destruir);
+								return 1;
 							}
 						}
 						break;
@@ -117,7 +132,7 @@ int main() {
 		{
 			cadena_graficar("GAME OVER", 400, 300, 4, renderer);
 		}
-		
+
 		//esto pasa solo durante la partida
 		if(vidas != 0)
 		{
@@ -126,12 +141,12 @@ int main() {
 				nave_mover(nave, DT);
 				nave_dibujar(nave);
 			}
-	        
+
 	        if(nave_murio) //si la nave esta muerta sumo tiempo de espera
 	        {
-				nave_espera += DT;	
+				nave_espera += DT;
 	        }
-	        
+
 	        //si llego el tiempo de que la nave aparezca:
 
 	        if(nave_creacion_colision == true) //si hay colision reseteo el contador para esperar 0.1 segundos mas
@@ -179,13 +194,13 @@ int main() {
 				{
 					nave_creacion_colision = true;
 				}
-			}	
+			}
 		}
 		lista_iterador_destruir(iter_ast);
 
 
 		//ITERADOR DISPAROS
-		//recorre la lista de disparos moviendo y dibujando cada uno, 
+		//recorre la lista de disparos moviendo y dibujando cada uno,
 		//elimina a los que tienen mas de 0.7 segundos de vida
 		lista_iterador_t * iter_disp = lista_iterador_crear(lista_disp);
 		for(
@@ -194,7 +209,7 @@ int main() {
 			lista_iterador_siguiente(iter_disp)
 		){
 			disparo_t * d = lista_iterador_actual(iter_disp);
-			if(disparo_get_tiempo(d) >= 0.7)
+			if(disparo_get_tiempo(d) >= DISPARO_TIEMPO_VIDA)
 				lista_iterador_eliminar(iter_disp);
 			disparo_mover(d, DT);
 			disparo_dibujar(d);
@@ -239,4 +254,30 @@ int main() {
 
 	SDL_Quit();
 	return 0;
+}
+
+lista_t *inicializar_asteroides(int n) {
+	lista_t *lista_ast = lista_crear();
+	if(lista_ast == NULL)
+		return NULL;
+
+	float x, y; // Posicion incial de cada asteroide
+
+	//creo 10 asteroides
+	for(size_t i = 0; i < n; i++)
+	{
+		int s = rand() % 2;
+		if(s == 0) {
+			x = 0;
+			y = randomf(0, VENTANA_ALTO);
+		}
+		else {
+			x = randomf(0, VENTANA_ANCHO);
+			y = 0;
+		}
+
+		lista_insertar_final(lista_ast, asteroide_crear(x, y, 32)); //hay que hacerlo random
+	}
+
+	return lista_ast;
 }

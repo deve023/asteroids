@@ -9,6 +9,8 @@
 #include <math.h>
 #include <SDL2/SDL.h>
 
+#include "matematica.h"
+
 /*
 Recibe un vector de coordenadas v de n elementos y un angulo rad.
 Rota cada una de las coordenadas rad radianes respecto al origen de coordenadas.
@@ -29,7 +31,7 @@ Devuelve false si esa condicion no se cumple.
 bool vector_esta_arriba(float ** v, int n, float x, float y);
 
 /*
-Recibe un vector dinamico v de n elementos y libera la memoria 
+Recibe un vector dinamico v de n elementos y libera la memoria
 asociada al vector.
 */
 void vector_destruir(float ** v, size_t n);
@@ -59,14 +61,14 @@ void vector_graficar(float ** v, size_t n, float x, float y, float escala, SDL_R
 
 /*
 Recibe un vector v de n coordenadas en R2.
-Ordena los elementos del vector en forma creciente de acuerdo a la 
+Ordena los elementos del vector en forma creciente de acuerdo a la
 coordenada x.
 */
 void vector_ordenar(float ** v, size_t n);
 
 /*
 Recibe un vector v de n coordenadas en R2 y un valor de la coordenada x.
-Devuelve la coordenada y del punto (x,y) que pertenece al segmento de v 
+Devuelve la coordenada y del punto (x,y) que pertenece al segmento de v
 correspondiente a x.
 */
 float vector_interpolar(float **v, size_t n, float x);

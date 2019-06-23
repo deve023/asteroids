@@ -42,7 +42,7 @@ void disparo_mover(disparo_t * d, float dt)
 
 bool disparo_dibujar(disparo_t * d)
 {
-	return graficador_dibujar("SHOT", 1, d->x, d->y, d->angulo);
+	return graficador_dibujar(DISPARO_SPRITE, 1, d->x, d->y, d->angulo);
 }
 
 float disparo_get_x(const disparo_t *d) {
