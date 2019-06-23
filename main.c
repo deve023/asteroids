@@ -12,7 +12,6 @@
 
 #define DT (1.0 / JUEGO_FPS)
 
-
 // Crea una lista con n asteroides.
 lista_t *inicializar_asteroides(int n);
 
@@ -33,7 +32,6 @@ int main() {
 
 	if(!graficador_inicializar("sprites.bin", renderer))
 		return 1;
-
 
 	nave_t *nave = nave_crear(NAVE_X_INICIAL, NAVE_Y_INICIAL, NAVE_ANGULO_INICIAL); //creo nave
 	if(nave == NULL) {
@@ -128,8 +126,6 @@ int main() {
 						break;
 				}
 				// END código del alumno
-
-
 			}
 			continue;
 		}
@@ -193,9 +189,11 @@ int main() {
 			!lista_iterador_termino(iter_ast);
 			lista_iterador_siguiente(iter_ast)
 		){
-			asteroide_t * a = lista_iterador_actual(iter_ast);//obtengo asteroide actual
+			asteroide_t * a = lista_iterador_actual(iter_ast); //obtengo asteroide actual
 			asteroide_mover(a, DT); //muevo el asteroide actual
 			asteroide_dibujar(a); //dibujo el asteroide actual
+
+			bool asteroide_destruido = false;
 
 			//veo si el asteroide colisiona con algun disparo
 			lista_iterador_t *iter_disp = lista_iterador_crear(lista_disp);
@@ -212,22 +210,25 @@ int main() {
 
 					if(asteroide_get_radio(a) == 8) {
 						asteroide_destruir(lista_iterador_eliminar(iter_ast));
+						asteroide_destruido = true;
 
 						score += 100;
 					}
 
 					else if(asteroide_get_radio(a) == 16) {
-						lista_iterador_insertar(iter_ast, asteroide_crear(x, y, 8));
-						lista_iterador_insertar(iter_ast, asteroide_crear(x, y, 8));
+						lista_insertar_final(lista_ast, asteroide_crear(x, y, 8));
+						lista_insertar_final(lista_ast, asteroide_crear(x, y, 8));
 						asteroide_destruir(lista_iterador_eliminar(iter_ast));
+						asteroide_destruido = true;
 
 						score += 50;
 					}
 
 					else {
-						lista_iterador_insertar(iter_ast, asteroide_crear(x, y, 16));
-						lista_iterador_insertar(iter_ast, asteroide_crear(x, y, 16));
+						lista_insertar_final(lista_ast, asteroide_crear(x, y, 16));
+						lista_insertar_final(lista_ast, asteroide_crear(x, y, 16));
 						asteroide_destruir(lista_iterador_eliminar(iter_ast));
+						asteroide_destruido = true;
 
 						score += 20;
 					}
@@ -235,6 +236,9 @@ int main() {
 				}
 			}
 			lista_iterador_destruir(iter_disp);
+			
+			if(asteroide_destruido)
+				continue;
 
 			//si la nave esta viva veo si se choca con un asteroide
 			if(!nave_murio && asteroide_colision(a, nave_get_x(nave), nave_get_y(nave)))
@@ -285,7 +289,6 @@ int main() {
 		}
 		lista_iterador_destruir(iter_disp);
 
-
 		//grafica las vidas en la parte superior izquierda de la pantalla
 		for(size_t i = 0; i < vidas; i++)
 		{
@@ -298,11 +301,7 @@ int main() {
 		//grafico el mejor puntaje en el centro superior de la pantalla
 		contador_graficar_ceros(best_score, 4, VENTANA_ANCHO / 2, 75, 2, renderer);
 
-
-
-
 		// END código del alumno
-
 
         SDL_RenderPresent(renderer);
 		ticks = SDL_GetTicks() - ticks;
@@ -347,7 +346,10 @@ lista_t *inicializar_asteroides(int n) {
 			y = 0;
 		}
 
-		lista_insertar_final(lista_ast, asteroide_crear(x, y, 32));
+		if(!lista_insertar_final(lista_ast, asteroide_crear(x, y, 32))) {
+			lista_destruir(lista_ast, asteroide_destruir);
+			return NULL;
+		}
 	}
 
 	return lista_ast;

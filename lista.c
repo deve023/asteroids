@@ -69,7 +69,8 @@ bool lista_insertar_comienzo(lista_t *l, void *d) {
 
 bool lista_insertar_final(lista_t *l, void *d) {
 	nodo_t *n = nodo_crear(d);
-	if(n == NULL) return false;
+	if(n == NULL)
+		return false;
 
 	// Si está vacía inserto al principio:
 	if(l->prim == NULL) {
@@ -173,32 +174,32 @@ void *lista_buscar(const lista_t *l, const void *d, int (*cmp)(const void *a, co
 	return dato;
 }*/
 
-void *lista_borrar(lista_t *l, const void *d, int (*cmp)(const void *a, const void *b)) {                                    
-    // Retiramos ocurrencias al comienzo.                                      
-    while(l->prim && cmp(l->prim->dato, d) == 0) {                                      
-        struct nodo *aux = l->prim->sig;                                        
-        free(l->prim);                                                          
-        l->prim = aux;                                                          
-    }                                                                          
-                                                                               
-    // Verificamos que quede al menos un elemento.                              
-    if(l->prim == NULL)                                                        
-        return (void*)d;                                                                
-                                                                               
-    // Retiramos de resto.                                                      
-    struct nodo *ant = l->prim;                                                
-    while(ant->sig) {                                                          
-        struct nodo *actual = ant->sig;                                        
-        if(cmp(actual->dato, d) == 0) {                                                
-            ant->sig = actual->sig;                                            
-            free(actual);                                                      
-        }                                                                      
-        else                                                                    
-            ant = actual;                                                      
+void *lista_borrar(lista_t *l, const void *d, int (*cmp)(const void *a, const void *b)) {
+    // Retiramos ocurrencias al comienzo.
+    while(l->prim && cmp(l->prim->dato, d) == 0) {
+        struct nodo *aux = l->prim->sig;
+        free(l->prim);
+        l->prim = aux;
     }
 
-    return (void*)d;                                                                         
-}    
+    // Verificamos que quede al menos un elemento.
+    if(l->prim == NULL)
+        return (void*)d;
+
+    // Retiramos de resto.
+    struct nodo *ant = l->prim;
+    while(ant->sig) {
+        struct nodo *actual = ant->sig;
+        if(cmp(actual->dato, d) == 0) {
+            ant->sig = actual->sig;
+            free(actual);
+        }
+        else
+            ant = actual;
+    }
+
+    return (void*)d;
+}
 
 void lista_recorrer(const lista_t *l, bool (*visitar)(void *dato, void *extra), void *extra) {
 
@@ -244,9 +245,9 @@ lista_t *lista_filtrar(lista_t *l, bool (*f)(void *dato, void *extra), void *ext
 	aux = aux->sig;
 
     while(aux != NULL) {
-            
+
         if(f(aux->dato, extra)) {
-			
+
 			lista_insertar_final(nl, aux->dato);
 
 			ant->sig = aux->sig;
