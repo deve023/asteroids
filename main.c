@@ -193,55 +193,6 @@ int main() {
 			asteroide_mover(a, DT); //muevo el asteroide actual
 			asteroide_dibujar(a); //dibujo el asteroide actual
 
-			bool asteroide_destruido = false;
-
-			//veo si el asteroide colisiona con algun disparo
-			lista_iterador_t *iter_disp = lista_iterador_crear(lista_disp);
-			for(
-				iter_disp = lista_iterador_crear(lista_disp);
-				!lista_iterador_termino(iter_disp);
-				lista_iterador_siguiente(iter_disp)
-			){
-				disparo_t *d = lista_iterador_actual(iter_disp);
-				if(asteroide_colision(a, disparo_get_x(d), disparo_get_y(d))) {
-
-					float x = asteroide_get_x(a);
-					float y = asteroide_get_y(a);
-
-					if(asteroide_get_radio(a) == 8) {
-						asteroide_destruir(lista_iterador_eliminar(iter_ast));
-						asteroide_destruido = true;
-
-						score += 100;
-					}
-
-					else if(asteroide_get_radio(a) == 16) {
-						lista_insertar_final(lista_ast, asteroide_crear(x, y, 8));
-						lista_insertar_final(lista_ast, asteroide_crear(x, y, 8));
-						asteroide_destruir(lista_iterador_eliminar(iter_ast));
-						asteroide_destruido = true;
-
-						score += 50;
-					}
-
-					else {
-						lista_insertar_final(lista_ast, asteroide_crear(x, y, 16));
-						lista_insertar_final(lista_ast, asteroide_crear(x, y, 16));
-						asteroide_destruir(lista_iterador_eliminar(iter_ast));
-						asteroide_destruido = true;
-
-						score += 20;
-					}
-					disparo_destruir(lista_iterador_eliminar(iter_disp));
-
-					break;
-				}
-			}
-			lista_iterador_destruir(iter_disp);
-
-			if(asteroide_destruido)
-				continue;
-
 			//si la nave esta viva veo si se choca con un asteroide
 			if(!nave_murio && asteroide_colision(a, nave_get_x(nave), nave_get_y(nave)))
 			{
@@ -258,6 +209,47 @@ int main() {
 					nave_creacion_colision = true;
 				}
 			}
+
+			//veo si el asteroide colisiona con algun disparo
+			lista_iterador_t *iter_disp = lista_iterador_crear(lista_disp);
+			for(
+				iter_disp = lista_iterador_crear(lista_disp);
+				!lista_iterador_termino(iter_disp);
+				lista_iterador_siguiente(iter_disp)
+			){
+				disparo_t *d = lista_iterador_actual(iter_disp);
+				if(asteroide_colision(a, disparo_get_x(d), disparo_get_y(d))) {
+
+					float x = asteroide_get_x(a);
+					float y = asteroide_get_y(a);
+
+					if(asteroide_get_radio(a) == 8) {
+						asteroide_destruir(lista_iterador_eliminar(iter_ast));
+
+						score += 100;
+					}
+
+					else if(asteroide_get_radio(a) == 16) {
+						lista_insertar_final(lista_ast, asteroide_crear(x, y, 8));
+						lista_insertar_final(lista_ast, asteroide_crear(x, y, 8));
+						asteroide_destruir(lista_iterador_eliminar(iter_ast));
+
+						score += 50;
+					}
+
+					else {
+						lista_insertar_final(lista_ast, asteroide_crear(x, y, 16));
+						lista_insertar_final(lista_ast, asteroide_crear(x, y, 16));
+						asteroide_destruir(lista_iterador_eliminar(iter_ast));
+
+						score += 20;
+					}
+					disparo_destruir(lista_iterador_eliminar(iter_disp));
+
+					break; 
+				}
+			}
+			lista_iterador_destruir(iter_disp);
 		}
 		lista_iterador_destruir(iter_ast);
 
