@@ -15,7 +15,8 @@ typedef struct nodo {
 	void *dato;
 } nodo_t;
 
-static nodo_t *nodo_crear(void *d) {
+static nodo_t *nodo_crear(void *d)
+{
 	nodo_t *n = malloc(sizeof(nodo_t));
 	if(n == NULL)
 		return NULL;
@@ -26,7 +27,8 @@ static nodo_t *nodo_crear(void *d) {
 	return n;
 }
 
-lista_t *lista_crear() {
+lista_t *lista_crear()
+{
 	lista_t *l = malloc(sizeof(lista_t));
 	if(l == NULL)
 		return NULL;
@@ -36,9 +38,11 @@ lista_t *lista_crear() {
 }
 
 
-void lista_destruir(lista_t *l, void (*destruir_dato)(void *d)) {
+void lista_destruir(lista_t *l, void (*destruir_dato)(void *d))
+{
 	nodo_t *n = l->prim;
-	while(n != NULL) {
+	while(n != NULL)
+	{
 		nodo_t *sig = n->sig;
 
 		if(destruir_dato != NULL)
@@ -52,11 +56,13 @@ void lista_destruir(lista_t *l, void (*destruir_dato)(void *d)) {
 	free(l);
 }
 
-bool lista_es_vacia(const lista_t *l) {
+bool lista_es_vacia(const lista_t *l)
+{
 	return l->prim == NULL;
 }
 
-bool lista_insertar_comienzo(lista_t *l, void *d) {
+bool lista_insertar_comienzo(lista_t *l, void *d)
+{
 	nodo_t *n = nodo_crear(d);
 	if(n == NULL)
 		return false;
@@ -67,7 +73,8 @@ bool lista_insertar_comienzo(lista_t *l, void *d) {
 	return true;
 }
 
-bool lista_insertar_final(lista_t *l, void *d) {
+bool lista_insertar_final(lista_t *l, void *d)
+{
 	nodo_t *n = nodo_crear(d);
 	if(n == NULL)
 		return false;
@@ -88,7 +95,8 @@ bool lista_insertar_final(lista_t *l, void *d) {
 	return true;
 }
 
-void *lista_extraer_primero(lista_t *l) {
+void *lista_extraer_primero(lista_t *l)
+{
 	if(lista_es_vacia(l))
 		return NULL;
 
@@ -130,10 +138,11 @@ void * lista_extraer_ultimo(lista_t * l)
 }
 
 
-void *lista_buscar(const lista_t *l, const void *d, int (*cmp)(const void *a, const void *b)) {
-
+void *lista_buscar(const lista_t *l, const void *d, int (*cmp)(const void *a, const void *b))
+{
 	nodo_t *n = l->prim;
-	while(n != NULL) {
+	while(n != NULL)
+	{
 		if(cmp(n->dato, d) == 0)
 			return n->dato;
 
@@ -143,40 +152,11 @@ void *lista_buscar(const lista_t *l, const void *d, int (*cmp)(const void *a, co
 	return NULL;
 }
 
-/*void *lista_borrar(lista_t *l, const void *d, int (*cmp)(const void *a, const void *b)) {
-
-	if(lista_es_vacia(l))
-		return NULL;
-
-	// Si es el primero
-	nodo_t *n = l->prim;
-	if(cmp(n->dato, d) == 0)
-		return lista_extraer_primero(l);
-
-	// Si esta despues
-	n = n->sig;
-	nodo_t *ant;
-	while(n != NULL) {
-		if(cmp(n->dato, d) == 0)
-			break;
-		ant = n;
-		n = n->sig;
-	}
-
-	if(n == NULL)
-		return NULL;
-
-	void *dato = n->dato;
-
-	ant->sig = n->sig;
-	free(n);
-
-	return dato;
-}*/
-
-void *lista_borrar(lista_t *l, const void *d, int (*cmp)(const void *a, const void *b)) {
+void *lista_borrar(lista_t *l, const void *d, int (*cmp)(const void *a, const void *b))
+{
     // Retiramos ocurrencias al comienzo.
-    while(l->prim && cmp(l->prim->dato, d) == 0) {
+    while(l->prim && cmp(l->prim->dato, d) == 0)
+	{
         struct nodo *aux = l->prim->sig;
         free(l->prim);
         l->prim = aux;
@@ -188,7 +168,8 @@ void *lista_borrar(lista_t *l, const void *d, int (*cmp)(const void *a, const vo
 
     // Retiramos de resto.
     struct nodo *ant = l->prim;
-    while(ant->sig) {
+    while(ant->sig)
+	{
         struct nodo *actual = ant->sig;
         if(cmp(actual->dato, d) == 0) {
             ant->sig = actual->sig;
@@ -201,27 +182,29 @@ void *lista_borrar(lista_t *l, const void *d, int (*cmp)(const void *a, const vo
     return (void*)d;
 }
 
-void lista_recorrer(const lista_t *l, bool (*visitar)(void *dato, void *extra), void *extra) {
-
+void lista_recorrer(const lista_t *l, bool (*visitar)(void *dato, void *extra), void *extra)
+{
 	nodo_t *n = l->prim;
-	while(n != NULL) {
+	while(n != NULL)
+	{
 		if(!visitar(n->dato, extra))
 			return;
 		n = n->sig;
 	}
 }
 
-void lista_mapear(lista_t *l, void *(*f)(void *dato, void *extra), void *extra) {
-
+void lista_mapear(lista_t *l, void *(*f)(void *dato, void *extra), void *extra)
+{
 	nodo_t *n = l->prim;
-	while(n != NULL) {
+	while(n != NULL)
+	{
 		n->dato = f(n->dato, extra);
 		n = n->sig;
 	}
 }
 
-lista_t *lista_filtrar(lista_t *l, bool (*f)(void *dato, void *extra), void *extra){
-
+lista_t *lista_filtrar(lista_t *l, bool (*f)(void *dato, void *extra), void *extra)
+{
 	lista_t * nl = lista_crear();
 	if(nl == NULL)
 		return NULL;
@@ -230,7 +213,8 @@ lista_t *lista_filtrar(lista_t *l, bool (*f)(void *dato, void *extra), void *ext
 
 	//Miro los primeros elementos
 
-	while(aux != NULL && f(aux->dato, extra)) {
+	while(aux != NULL && f(aux->dato, extra))
+	{
 		void * d = lista_extraer_primero(l);
 		lista_insertar_final(nl, d);
 		aux = l->prim;
@@ -244,10 +228,10 @@ lista_t *lista_filtrar(lista_t *l, bool (*f)(void *dato, void *extra), void *ext
 	nodo_t *ant = aux;
 	aux = aux->sig;
 
-    while(aux != NULL) {
-
-        if(f(aux->dato, extra)) {
-
+    while(aux != NULL)
+	{
+        if(f(aux->dato, extra))
+		{
 			lista_insertar_final(nl, aux->dato);
 
 			ant->sig = aux->sig;
@@ -255,7 +239,8 @@ lista_t *lista_filtrar(lista_t *l, bool (*f)(void *dato, void *extra), void *ext
 
 			aux = ant->sig;
 		}
-		else {
+		else
+		{
 			ant = aux;
 			aux = aux->sig;
 		}
@@ -264,10 +249,11 @@ lista_t *lista_filtrar(lista_t *l, bool (*f)(void *dato, void *extra), void *ext
 	return nl;
 }
 
-bool lista_extender(lista_t *a, const lista_t *b) {
-
+bool lista_extender(lista_t *a, const lista_t *b)
+{
 	nodo_t *aux = b->prim;
-	while(aux != NULL) {
+	while(aux != NULL)
+	{
 		if(!lista_insertar_final(a, aux->dato))
 			return false;
 
@@ -277,14 +263,16 @@ bool lista_extender(lista_t *a, const lista_t *b) {
 	return true;
 }
 
-void **lista_a_vector(const lista_t *l, size_t *n) {
+void **lista_a_vector(const lista_t *l, size_t *n)
+{
 	void **v = NULL;
 	size_t tam = 0;
 
 	nodo_t *nodo = l->prim;
-	while(nodo != NULL) {
+	while(nodo != NULL)
+	{
 		void **aux_v = realloc(v, (++tam) * sizeof(void*));
-		if(aux_v == NULL){
+		if(aux_v == NULL) {
 			free(v);
 			return NULL;
 		}
@@ -298,7 +286,8 @@ void **lista_a_vector(const lista_t *l, size_t *n) {
 	return v;
 }
 
-lista_iterador_t *lista_iterador_crear(lista_t *l) {
+lista_iterador_t *lista_iterador_crear(lista_t *l)
+{
 	lista_iterador_t *li = malloc(sizeof(lista_iterador_t));
 	if(li == NULL)
 		return NULL;
@@ -310,27 +299,23 @@ lista_iterador_t *lista_iterador_crear(lista_t *l) {
 	return li;
 }
 
-void lista_iterador_destruir(lista_iterador_t *li) {
+void lista_iterador_destruir(lista_iterador_t *li)
+{
 	free(li);
 }
 
-void *lista_iterador_actual(const lista_iterador_t *li) {
-
+void *lista_iterador_actual(const lista_iterador_t *li)
+{
 	if(li == NULL)
 		return NULL;
 
 	return li->n->dato;
 }
 
-bool lista_iterador_siguiente(lista_iterador_t *li) {
-
+bool lista_iterador_siguiente(lista_iterador_t *li)
+{
 	if(li->n == NULL)
 		return false;
-
-	/*if(li->n->sig == NULL) {
-		li->n = NULL;
-		return false;
-	}*/ //que problema hay con que sea NULL?
 
 	li->ant = li->n;
 	li->n = li->n->sig;
@@ -338,13 +323,13 @@ bool lista_iterador_siguiente(lista_iterador_t *li) {
 	return true;
 }
 
-bool lista_iterador_termino(const lista_iterador_t *li) {
-
+bool lista_iterador_termino(const lista_iterador_t *li)
+{
 	return li->n == NULL;
 }
 
-void *lista_iterador_eliminar(lista_iterador_t *li) {
-
+void *lista_iterador_eliminar(lista_iterador_t *li)
+{
 	if(li->n == NULL)
 		return NULL;
 
@@ -363,13 +348,12 @@ void *lista_iterador_eliminar(lista_iterador_t *li) {
 	return d;
 }
 
-bool lista_iterador_insertar(lista_iterador_t *li, void *dato) {
-
+bool lista_iterador_insertar(lista_iterador_t *li, void *dato)
+{
 	if(lista_es_vacia(li->l)) {
 		lista_insertar_comienzo(li->l, dato);
 		return true;
 	}
-
 
 	if(li->n == NULL)
 		return false;
