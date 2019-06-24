@@ -1,9 +1,6 @@
 #include "vector.h"
 #include "config.h"
 
-
-
-
 /*
 Recibe dos variables p1 y p2 de tipo float **.
 Intercambia lo apuntado por p1 con lo apuntado por p2.
@@ -199,7 +196,6 @@ void vector_ordenar(float ** v, size_t n)
 		}
 	}
 }
-
 
 float vector_interpolar(float **v, size_t n, float x)
 {

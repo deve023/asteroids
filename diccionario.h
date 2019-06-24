@@ -9,8 +9,6 @@
 
 typedef const int (*matriz_t)[2];
 
-
-
 /*
 Recibe un caracter y un puntero a una variable n.
 Devuelve por el nombre la matriz correspondiente al caracter, definida en caracteres.h.

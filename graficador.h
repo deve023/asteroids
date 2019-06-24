@@ -16,4 +16,4 @@ void graficador_finalizar();
 void graficador_ajustar_variables(float *x, float *y);
 bool graficador_dibujar(const char *nombre, float escala, float x, float y, float angulo);
 
-#endif
+#endif // _GRAFICADOR_H_

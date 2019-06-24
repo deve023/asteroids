@@ -13,7 +13,8 @@ static int w, h;
 //Lista con los sprites
 static lista_t *ls;
 
-static sprite_t *sprite_crear() {
+static sprite_t *sprite_crear()
+{
     sprite_t *s = malloc(sizeof(sprite_t));
     if(s == NULL)
         return NULL;
@@ -24,32 +25,35 @@ static sprite_t *sprite_crear() {
     return s;
 }
 
-static void sprite_destruir(void *s) {
+static void sprite_destruir(void *s)
+{
     vector_destruir(((sprite_t*)s)->coords, ((sprite_t*)s)->n);
     free(s);
 }
 
-static int sprite_comparar_nombre(const void *s, const void *n) {
+static int sprite_comparar_nombre(const void *s, const void *n)
+{
     return strcmp(((sprite_t*)s)->nombre, (char*)n);
 }
 
-bool graficador_inicializar(const char *fn, SDL_Renderer *r) {
+bool graficador_inicializar(const char *fn, SDL_Renderer *r)
+{
     FILE *fp = fopen(fn, "r");
     if(fp == NULL)
         return false;
 
     ls = lista_crear();
-    if(ls == NULL) {
+    if(ls == NULL)
+    {
         fclose(fp);
         return false;
     }
 
-    while(!feof(fp)) {
-
-
+    while(!feof(fp))
+    {
         sprite_t *s = sprite_crear();
-        if(s == NULL){
-
+        if(s == NULL)
+        {
             lista_destruir(ls, sprite_destruir);
             fclose(fp);
             return false;
@@ -59,17 +63,19 @@ bool graficador_inicializar(const char *fn, SDL_Renderer *r) {
         fread(&(s->n), sizeof(uint16_t), 1, fp);//Guardo n
 
         s->coords = malloc(sizeof(float *) * s->n);
-        if(s->coords == NULL) {
-
+        if(s->coords == NULL)
+        {
             free(s);
             lista_destruir(ls, sprite_destruir);
             fclose(fp);
             return false;
         }
 
-        for(size_t i = 0; i < s->n; i++){
+        for(size_t i = 0; i < s->n; i++)
+        {
             (s->coords)[i] = malloc(sizeof(float) * 2);
-            if((s->coords)[i] == NULL) {
+            if((s->coords)[i] == NULL)
+            {
                 sprite_destruir(s);
                 lista_destruir(ls, sprite_destruir);
                 fclose(fp);
@@ -81,6 +87,7 @@ bool graficador_inicializar(const char *fn, SDL_Renderer *r) {
 
         lista_insertar_final(ls, s);
     }
+
     fclose(fp);
 
     renderer = r;
@@ -88,12 +95,14 @@ bool graficador_inicializar(const char *fn, SDL_Renderer *r) {
 
     return true;
 }
-void graficador_finalizar() {
+
+void graficador_finalizar()
+{
     lista_destruir(ls, sprite_destruir);
 }
 
-void graficador_ajustar_variables(float *x, float *y) {
-
+void graficador_ajustar_variables(float *x, float *y)
+{
     if(*x > w)
         *x = fmod(*x,w);
     else if(*x == 0)
@@ -109,7 +118,8 @@ void graficador_ajustar_variables(float *x, float *y) {
         *y = h + fmod(*y,h);
 }
 
-bool graficador_dibujar(const char *nombre, float escala, float x, float y, float angulo) {
+bool graficador_dibujar(const char *nombre, float escala, float x, float y, float angulo)
+{
     sprite_t *s = lista_buscar(ls, nombre, sprite_comparar_nombre);
     if(s == NULL)
         return false;

@@ -1,3 +1,6 @@
+#ifndef _ASTEROIDE_H_
+#define _ASTEROIDE_H_
+
 #include "graficador.h"
 #include "config.h"
 #include "fisica.h"
@@ -16,3 +19,5 @@ bool asteroide_colision(const asteroide_t *a, float x, float y);
 float asteroide_get_x(const asteroide_t *a);
 float asteroide_get_y(const asteroide_t *a);
 float asteroide_get_radio(const asteroide_t *a);
+
+#endif // _ASTEROIDE_H_

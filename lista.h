@@ -21,7 +21,6 @@ void *lista_extraer_ultimo(lista_t *l);
 void *lista_buscar(const lista_t *l, const void *d, int (*cmp)(const void *a, const void *b));
 void *lista_borrar(lista_t *l, const void *dato, int (*cmp)(const void *a, const void *b));
 void lista_recorrer(const lista_t *l, bool (*visitar)(void *dato, void *extra), void *extra);
-
 void lista_mapear(lista_t *l, void *(*f)(void *dato, void *extra), void *extra);
 lista_t *lista_filtrar(lista_t *l, bool (*f)(void *dato, void *extra), void *extra);
 bool lista_extender(lista_t *a, const lista_t *b);
@@ -35,4 +34,4 @@ bool lista_iterador_termino(const lista_iterador_t *li);
 void *lista_iterador_eliminar(lista_iterador_t *li);
 bool lista_iterador_insertar(lista_iterador_t *li, void *dato);
 
-#endif
+#endif // _LISTA_H_

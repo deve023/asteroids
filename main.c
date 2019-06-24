@@ -95,15 +95,13 @@ int main() {
 						break;
 					case SDLK_SPACE:
 						//creo un disparo
-						if(!nave_murio)
-						{
+						if(!nave_murio) {
 						lista_insertar_final(
 							lista_disp,
 							disparo_crear(nave_get_x(nave), nave_get_y(nave), nave_get_angulo(nave))
 							);
 						}
-						if(vidas == 0)
-						{
+						if(vidas == 0) {
 							nave = nave_crear(NAVE_X_INICIAL, NAVE_Y_INICIAL, NAVE_ANGULO_INICIAL);
 							if(nave == NULL) {
 								graficador_finalizar();
@@ -218,18 +216,20 @@ int main() {
 				lista_iterador_siguiente(iter_disp)
 			){
 				disparo_t *d = lista_iterador_actual(iter_disp);
-				if(asteroide_colision(a, disparo_get_x(d), disparo_get_y(d))) {
-
+				if(asteroide_colision(a, disparo_get_x(d), disparo_get_y(d)))
+				{
 					float x = asteroide_get_x(a);
 					float y = asteroide_get_y(a);
 
-					if(asteroide_get_radio(a) == 8) {
+					if(asteroide_get_radio(a) == 8)
+					{
 						asteroide_destruir(lista_iterador_eliminar(iter_ast));
 
 						score += 100;
 					}
 
-					else if(asteroide_get_radio(a) == 16) {
+					else if(asteroide_get_radio(a) == 16)
+					{
 						lista_insertar_final(lista_ast, asteroide_crear(x, y, 8));
 						lista_insertar_final(lista_ast, asteroide_crear(x, y, 8));
 						asteroide_destruir(lista_iterador_eliminar(iter_ast));
@@ -237,24 +237,26 @@ int main() {
 						score += 50;
 					}
 
-					else {
+					else
+					{
 						lista_insertar_final(lista_ast, asteroide_crear(x, y, 16));
 						lista_insertar_final(lista_ast, asteroide_crear(x, y, 16));
 						asteroide_destruir(lista_iterador_eliminar(iter_ast));
 
 						score += 20;
 					}
+
 					disparo_destruir(lista_iterador_eliminar(iter_disp));
 
-					break; 
+					break;
 				}
 			}
 			lista_iterador_destruir(iter_disp);
 		}
 		lista_iterador_destruir(iter_ast);
 
-		//veo si murieron todos los asteroides
-		if(lista_es_vacia(lista_ast)) {
+		if(lista_es_vacia(lista_ast)) //veo si murieron todos los asteroides
+		{
 			free(lista_ast);
 			asteroides_cant += 2;
 			lista_ast = inicializar_asteroides(asteroides_cant); //creo lista de asteroides, con 10 asteroides.
@@ -328,8 +330,7 @@ lista_t *inicializar_asteroides(int n) {
 	float x, y; // Posicion incial de cada asteroide
 
 	//creo n asteroides
-	for(size_t i = 0; i < n; i++)
-	{
+	for(size_t i = 0; i < n; i++) {
 		int s = rand() % 2;
 		if(s == 0) {
 			x = 0;

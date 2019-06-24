@@ -9,7 +9,8 @@ struct nave {
     float potencia;
 };
 
-nave_t *nave_crear(float x, float y, float angulo) {
+nave_t *nave_crear(float x, float y, float angulo)
+{
     nave_t *n = malloc(sizeof(nave_t));
     if(n == NULL)
         return NULL;
@@ -26,31 +27,38 @@ nave_t *nave_crear(float x, float y, float angulo) {
     return n;
 }
 
-void nave_destruir(void *n) {
+void nave_destruir(void *n)
+{
     free((nave_t*)n);
 }
 
-float nave_get_x(const nave_t *n) {
+float nave_get_x(const nave_t *n)
+{
     return n->x;
 }
-float nave_get_y(const nave_t *n) {
+
+float nave_get_y(const nave_t *n)
+{
     return n->y;
 }
 
-float nave_get_angulo(const nave_t *n) {
+float nave_get_angulo(const nave_t *n)
+{
     return n->angulo;
 }
 
-void nave_incrementar_angulo(nave_t *n, float angulo) {
+void nave_incrementar_angulo(nave_t *n, float angulo)
+{
     n->angulo += angulo;
 }
 
-void nave_impulso(nave_t *n) {
+void nave_impulso(nave_t *n)
+{
     n->potencia += NAVE_POTENCIA_IMPULSO;
 }
 
-void nave_mover(nave_t *n, float dt) {
-
+void nave_mover(nave_t *n, float dt)
+{
     n->vx = computar_velocidad(n->vx, n->potencia*cos(n->angulo), dt);
     n->vy = computar_velocidad(n->vy, n->potencia*sin(n->angulo), dt);
 
@@ -65,12 +73,13 @@ void nave_mover(nave_t *n, float dt) {
     n->potencia *= 1 - NAVE_POTENCIA_DECREC;
 }
 
-bool nave_dibujar(const nave_t *n) {
+bool nave_dibujar(const nave_t *n)
+{
     bool dibuja_nave = graficador_dibujar(NAVE_SPRITE, NAVE_ESCALA, n->x, n->y, n->angulo);
 
-    bool dibuja_chorro; 
+    bool dibuja_chorro;
     if(n->potencia > 1)
-        dibuja_chorro = graficador_dibujar(CHORRO_SPRITE, NAVE_ESCALA, n->x, n->y, n->angulo); 
+        dibuja_chorro = graficador_dibujar(CHORRO_SPRITE, NAVE_ESCALA, n->x, n->y, n->angulo);
     else dibuja_chorro = true;
 
     return dibuja_nave && dibuja_chorro;

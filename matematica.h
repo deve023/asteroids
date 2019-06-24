@@ -16,4 +16,4 @@ Devuelve un numero aleatorio perteneciente al intervalo [min,max].
 */
 float randomf(float min, float max);
 
-#endif
+#endif // _MATEMATICA_H_

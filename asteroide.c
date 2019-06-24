@@ -45,7 +45,8 @@ void asteroide_mover(asteroide_t * a, float dt)
 	graficador_ajustar_variables(&(a->x), &(a->y));
 }
 
-bool asteroide_dibujar(const asteroide_t *a) {
+bool asteroide_dibujar(const asteroide_t *a)
+{
     return graficador_dibujar(a->clase, a->radio, a->x, a->y, a->angulo);
 }
 
@@ -54,13 +55,17 @@ bool asteroide_colision(const asteroide_t *a, float x, float y)
 	return sqrt((x - a->x)*(x - a->x) + (y - a->y)*(y - a->y)) <= a->radio;
 }
 
-float asteroide_get_x(const asteroide_t *a) {
+float asteroide_get_x(const asteroide_t *a)
+{
     return a->x;
 }
-float asteroide_get_y(const asteroide_t *a) {
+
+float asteroide_get_y(const asteroide_t *a)
+{
     return a->y;
 }
 
-float asteroide_get_radio(const asteroide_t *a) {
+float asteroide_get_radio(const asteroide_t *a)
+{
     return a->radio;
 }

@@ -45,17 +45,22 @@ bool disparo_dibujar(disparo_t * d)
 	return graficador_dibujar(DISPARO_SPRITE, 1, d->x, d->y, d->angulo);
 }
 
-float disparo_get_x(const disparo_t *d) {
+float disparo_get_x(const disparo_t *d)
+{
     return d->x;
 }
-float disparo_get_y(const disparo_t *d) {
+
+float disparo_get_y(const disparo_t *d)
+{
     return d->y;
 }
 
-float disparo_get_angulo(const disparo_t *d) {
+float disparo_get_angulo(const disparo_t *d)
+{
     return d->angulo;
 }
 
-float disparo_get_tiempo(const disparo_t *d) {
+float disparo_get_tiempo(const disparo_t *d)
+{
 	return d->tiempo;
 }

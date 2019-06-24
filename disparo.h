@@ -1,3 +1,6 @@
+#ifndef _DISPARO_H_
+#define _DISPARO_H_
+
 #include "graficador.h"
 #include "config.h"
 #include "fisica.h"
@@ -16,3 +19,5 @@ float disparo_get_x(const disparo_t *d);
 float disparo_get_y(const disparo_t *d);
 float disparo_get_angulo(const disparo_t *d);
 float disparo_get_tiempo(const disparo_t *d);
+
+#endif // _DISPARO_H_

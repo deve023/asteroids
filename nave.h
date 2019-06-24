@@ -28,4 +28,4 @@ void nave_impulso(nave_t *n);
 void nave_mover(nave_t *n, float dt);
 bool nave_dibujar(const nave_t *n);
 
-#endif
+#endif // _NAVE_H_
