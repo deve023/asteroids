@@ -50,6 +50,11 @@ float nave_get_angulo(const nave_t *n)
 void nave_incrementar_angulo(nave_t *n, float angulo)
 {
     n->angulo += angulo;
+
+    if(n->angulo >= 2*PI)
+        n->angulo = 0;
+    else if(n->angulo <= 0)
+        n->angulo = 2*PI;
 }
 
 void nave_impulso(nave_t *n)
