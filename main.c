@@ -11,9 +11,17 @@
 #include "matematica.h"
 
 #define DT (1.0 / JUEGO_FPS)
+#define PUNTAJE_DIGITOS_MAX 8 //basado en el high score historico
 
 // Crea una lista con n asteroides.
 lista_t *inicializar_asteroides(int n);
+
+/*
+Recibe un puntaje entero, una posicion (x,y), un factor de escala y un renderer.
+Dibuja en la pantalla el puntaje trasladado a (x,y) y dimensionado por escala, en formato Asteroids.
+*/
+void puntaje_graficar_asteroids(int puntaje, float x, float y, float escala, SDL_Renderer * renderer);
+
 
 int main() {
 	SDL_Init(SDL_INIT_VIDEO);
@@ -61,9 +69,9 @@ int main() {
 
 	bool nave_murio = false;
 
-	float nave_espera = 0; //tiempo que espero para crear la nave despues de morir
-
 	bool nave_creacion_colision = false; //me dice si en el lugar de aparicion de la nave hay asteroides
+
+	float nave_espera = 0; //tiempo que espero para crear la nave despues de morir
 
 	int score = 0;
 
@@ -137,7 +145,7 @@ int main() {
       	//esto pasa solo en game over
         if(vidas == 0)
 		{
-			cadena_graficar("GAME OVER", 400, 300, 4, renderer);
+			cadena_graficar("GAME OVER", 400, 500, 4, renderer);
 
 			//actualizo el mejor puntaje si es necesario
 			if(score > best_score)
@@ -181,7 +189,7 @@ int main() {
 
 		//ITERADOR ASTEROIDES:
 		//recorre la lista de asteroides moviendo y dibujando cada uno, y chequeando colision con la nave y disparos
-        lista_iterador_t * iter_ast = lista_iterador_crear(lista_ast);
+        lista_iterador_t * iter_ast;
 		for(
 			iter_ast = lista_iterador_crear(lista_ast);
 			!lista_iterador_termino(iter_ast);
@@ -209,7 +217,7 @@ int main() {
 			}
 
 			//veo si el asteroide colisiona con algun disparo
-			lista_iterador_t *iter_disp = lista_iterador_crear(lista_disp);
+			lista_iterador_t *iter_disp;
 			for(
 				iter_disp = lista_iterador_crear(lista_disp);
 				!lista_iterador_termino(iter_disp);
@@ -271,17 +279,19 @@ int main() {
 		//ITERADOR DISPAROS
 		//recorre la lista de disparos moviendo y dibujando cada uno,
 		//elimina a los que tienen mas de 0.7 segundos de vida
-		lista_iterador_t * iter_disp = lista_iterador_crear(lista_disp);
+		lista_iterador_t * iter_disp;
 		for(
 			iter_disp = lista_iterador_crear(lista_disp);
 			!lista_iterador_termino(iter_disp);
 			lista_iterador_siguiente(iter_disp)
 		){
 			disparo_t * d = lista_iterador_actual(iter_disp);
-			if(disparo_get_tiempo(d) >= DISPARO_TIEMPO_VIDA)
-				lista_iterador_eliminar(iter_disp);
 			disparo_mover(d, DT);
 			disparo_dibujar(d);
+			if(disparo_get_tiempo(d) >= DISPARO_TIEMPO_VIDA)
+			{
+				disparo_destruir(lista_iterador_eliminar(iter_disp));
+			}
 		}
 		lista_iterador_destruir(iter_disp);
 
@@ -292,10 +302,13 @@ int main() {
 		}
 
 		//grafico el puntaje en la parte superior izquierda de la pantalla
-		contador_graficar_derecha(score, 4, 75, 75, 3, renderer);
 
+
+		puntaje_graficar_asteroids(score, 120, VENTANA_ALTO-75, 3, renderer);
 		//grafico el mejor puntaje en el centro superior de la pantalla
-		contador_graficar_ceros(best_score, 4, VENTANA_ANCHO / 2, 75, 2, renderer);
+
+		puntaje_graficar_asteroids(best_score, VENTANA_ANCHO/2, VENTANA_ALTO-75, 2, renderer);
+
 
 		// END código del alumno
 
@@ -312,6 +325,8 @@ int main() {
 
 	// BEGIN código del alumno
 	nave_destruir(nave);
+	lista_destruir(lista_ast, asteroide_destruir);
+	lista_destruir(lista_disp, disparo_destruir);
 	graficador_finalizar();
 	// END código del alumno
 
@@ -348,4 +363,12 @@ lista_t *inicializar_asteroides(int n) {
 	}
 
 	return lista_ast;
+}
+
+void puntaje_graficar_asteroids(int puntaje, float x, float y, float escala, SDL_Renderer * renderer)
+{
+		if(puntaje <= 9)
+			contador_graficar_ceros(puntaje, 2, x, y, escala, renderer);
+		else
+			contador_graficar_derecha(puntaje, PUNTAJE_DIGITOS_MAX, x-(PUNTAJE_DIGITOS_MAX-2)*CARACTER_ANCHO*escala, y, escala, renderer);
 }

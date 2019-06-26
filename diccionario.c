@@ -73,14 +73,16 @@ matriz_t caracter_a_matriz(char caracter, size_t * n)
 
 void caracter_graficar(matriz_t matriz, size_t n, float x, float y, float escala, SDL_Renderer * renderer)
 {
+		int w, h;
+		SDL_GetRendererOutputSize(renderer, &w, &h);
 		for(int i = 0; i < n-1; i++)
 		{
 			SDL_RenderDrawLine(
 				renderer,
 				matriz[i][0] * escala + x,
-				-matriz[i][1] * escala + y,
+				-matriz[i][1] * escala - y + h,
 				matriz[i+1][0] * escala + x,
-				-matriz[i+1][1] * escala + y
+				-matriz[i+1][1] * escala - y + h
 			);
 		}
 }
