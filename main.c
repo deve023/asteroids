@@ -40,6 +40,7 @@ int main() {
 	if(!graficador_inicializar("sprites.bin", renderer))
 	{
 		fputs("Error de inicializacion de graficador.\n", stderr);
+		
 		return 1;
 	}
 
@@ -47,6 +48,7 @@ int main() {
 	if(nave == NULL) {
 		fputs("Error de asignacion de memoria.\n", stderr);
 		graficador_finalizar();
+
 		return 1;
 	}
 
@@ -55,6 +57,7 @@ int main() {
 		fputs("Error de asignacion de memoria.\n", stderr);
 		graficador_finalizar();
 		nave_destruir(nave);
+
 		return 1;
 	}
 
@@ -65,6 +68,7 @@ int main() {
 		graficador_finalizar();
 		nave_destruir(nave);
 		lista_destruir(lista_disp, disparo_destruir);
+
 		return 1;
 	}
 
@@ -85,17 +89,17 @@ int main() {
 	// END código del alumno
 
 	unsigned int ticks = SDL_GetTicks();
-	while(1) 
+	while(1)
 	{
-		if(SDL_PollEvent(&event)) 
+		if(SDL_PollEvent(&event))
 		{
 			if(event.type == SDL_QUIT)
 				break;
 
-	    	if(event.type == SDL_KEYDOWN) 
+	    	if(event.type == SDL_KEYDOWN)
 	    	{
 				// BEGIN código del alumno
-				switch(event.key.keysym.sym) 
+				switch(event.key.keysym.sym)
 				{
 					case SDLK_UP:
 						if(!nave_murio)
@@ -114,7 +118,7 @@ int main() {
 
 					case SDLK_SPACE:
 						//creamos un disparo
-						if(!nave_murio) 
+						if(!nave_murio)
 						{
 							disparo_t * dn = disparo_crear(nave_get_x(nave), nave_get_y(nave), nave_get_angulo(nave));
 							if(dn == NULL)
@@ -124,37 +128,42 @@ int main() {
 								nave_destruir(nave);
 								lista_destruir(lista_ast, asteroide_destruir);
 								lista_destruir(lista_disp, disparo_destruir);
+
+								return 1;
 							}
 
 							lista_insertar_final(lista_disp, dn);
 						}
 
-						if(vidas == 0) 
+						if(vidas == 0)
 						{
 							nave = nave_crear(NAVE_X_INICIAL, NAVE_Y_INICIAL, NAVE_ANGULO_INICIAL);
-							if(nave == NULL) 
+							if(nave == NULL)
 							{
 								fputs("Error de asignacion de memoria.\n", stderr);
 								graficador_finalizar();
 								lista_destruir(lista_disp, disparo_destruir);
+								lista_destruir(lista_ast, asteroide_destruir);
+
 								return 1;
 							}
-							
+
 							nave_murio = false;
 							vidas = VIDAS_CANT_INICIAL;
-							
+
 							lista_destruir(lista_ast, asteroide_destruir);
 							asteroides_cant = ASTEROIDES_CANT_INICIAL; //reseteo la cantidad inicial de asteroides al comenzar nueva partida
 							lista_ast = inicializar_asteroides(asteroides_cant);
-							if(lista_ast == NULL) 
+							if(lista_ast == NULL)
 							{
 								fputs("Error de asignacion de memoria.\n", stderr);
 								graficador_finalizar();
 								nave_destruir(nave);
 								lista_destruir(lista_disp, disparo_destruir);
+
 								return 1;
 							}
-							
+
 							score = 0;
 						}
 						break;
@@ -210,9 +219,10 @@ int main() {
 				{
 					fputs("Error de asignacion de memoria.\n", stderr);
 					graficador_finalizar();
-					nave_destruir(nave);
 					lista_destruir(lista_ast, asteroide_destruir);
 					lista_destruir(lista_disp, disparo_destruir);
+
+					return 1;
 				}
 				nave_espera = 0;
 				nave_murio = false;
@@ -232,7 +242,10 @@ int main() {
 			nave_destruir(nave);
 			lista_destruir(lista_ast, asteroide_destruir);
 			lista_destruir(lista_disp, disparo_destruir);
+
+			return 1;
 		}
+
 		for(; !lista_iterador_termino(iter_ast); lista_iterador_siguiente(iter_ast))
 		{
 			asteroide_t * a = lista_iterador_actual(iter_ast); //obtengo asteroide actual
@@ -262,10 +275,13 @@ int main() {
 			{
 				fputs("Error de asignacion de memoria.\n", stderr);
 				graficador_finalizar();
-				nave_destruir(nave);
 				lista_destruir(lista_ast, asteroide_destruir);
 				lista_destruir(lista_disp, disparo_destruir);
 				lista_iterador_destruir(iter_ast);
+				if(!nave_murio)
+					nave_destruir(nave);
+
+				return 1;
 			}
 			for(; !lista_iterador_termino(iter_disp); lista_iterador_siguiente(iter_disp))
 			{
@@ -291,9 +307,14 @@ int main() {
 						{
 							fputs("Error de asignacion de memoria.\n", stderr);
 							graficador_finalizar();
-							nave_destruir(nave);
 							lista_destruir(lista_ast, asteroide_destruir);
 							lista_destruir(lista_disp, disparo_destruir);
+							lista_iterador_destruir(iter_ast);
+							lista_iterador_destruir(iter_disp);
+							if(!nave_murio)
+								nave_destruir(nave);
+
+							return 1;
 						}
 						lista_insertar_final(lista_ast, an);
 
@@ -302,9 +323,14 @@ int main() {
 						{
 							fputs("Error de asignacion de memoria.\n", stderr);
 							graficador_finalizar();
-							nave_destruir(nave);
 							lista_destruir(lista_ast, asteroide_destruir);
 							lista_destruir(lista_disp, disparo_destruir);
+							lista_iterador_destruir(iter_ast);
+							lista_iterador_destruir(iter_disp);
+							if(!nave_murio)
+								nave_destruir(nave);
+
+							return 1;
 						}
 						lista_insertar_final(lista_ast, an);
 
@@ -320,9 +346,14 @@ int main() {
 						{
 							fputs("Error de asignacion de memoria.\n", stderr);
 							graficador_finalizar();
-							nave_destruir(nave);
 							lista_destruir(lista_ast, asteroide_destruir);
 							lista_destruir(lista_disp, disparo_destruir);
+							lista_iterador_destruir(iter_ast);
+							lista_iterador_destruir(iter_disp);
+							if(!nave_murio)
+								nave_destruir(nave);
+
+							return 1;
 						}
 						lista_insertar_final(lista_ast, an);
 
@@ -331,9 +362,14 @@ int main() {
 						{
 							fputs("Error de asignacion de memoria.\n", stderr);
 							graficador_finalizar();
-							nave_destruir(nave);
 							lista_destruir(lista_ast, asteroide_destruir);
 							lista_destruir(lista_disp, disparo_destruir);
+							lista_iterador_destruir(iter_ast);
+							lista_iterador_destruir(iter_disp);
+							if(!nave_murio)
+								nave_destruir(nave);
+
+							return 1;
 						}
 						lista_insertar_final(lista_ast, an);
 
@@ -359,6 +395,7 @@ int main() {
 				graficador_finalizar();
 				nave_destruir(nave);
 				lista_destruir(lista_disp, disparo_destruir);
+
 				return 1;
 			}
 		}
@@ -374,6 +411,8 @@ int main() {
 			nave_destruir(nave);
 			lista_destruir(lista_ast, asteroide_destruir);
 			lista_destruir(lista_disp, disparo_destruir);
+
+			return 1;
 		}
 		for(; !lista_iterador_termino(iter_disp); lista_iterador_siguiente(iter_disp))
 		{
