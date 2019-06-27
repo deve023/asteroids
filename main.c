@@ -22,7 +22,6 @@ Dibuja en la pantalla el puntaje trasladado a (x,y) y dimensionado por escala, e
 */
 void puntaje_graficar_asteroids(int puntaje, float x, float y, float escala, SDL_Renderer * renderer);
 
-
 int main() {
 	SDL_Init(SDL_INIT_VIDEO);
 
