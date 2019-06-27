@@ -2,6 +2,7 @@
 #define _MATEMATICA_H_
 
 #include <stdlib.h>
+
 /*
 Recibe las coordenadas pertenecientes a los puntos p0 = (x0,y0) y p1 = (x1,y1)
 y un valor de la coordenada x.
