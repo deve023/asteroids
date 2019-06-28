@@ -119,7 +119,6 @@ int main()
 						break;
 
 					case SDLK_SPACE:
-						//creamos un disparo
 						if(!nave_murio)
 						{
 							disparo_t * dn = disparo_crear(nave_get_x(nave), nave_get_y(nave), nave_get_angulo(nave));
@@ -133,7 +132,7 @@ int main()
 
 								return 1;
 							}
-							
+
 							lista_insertar_final(lista_disp, dn);
 						}
 
