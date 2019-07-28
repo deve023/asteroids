@@ -16,6 +16,9 @@
 // Crea una lista con n asteroides en posiciones aleatorias sobre los bordes de la pantalla
 lista_t *inicializar_asteroides(int n);
 
+// Destruye el asteroide a y crea dos asteroides mas pequenos dependiendo del radio
+bool asteroide_destruccion(asteroide_t *a, lista_iterador_t *iter_ast, lista_t *lista_ast, int *puntaje);
+
 /*
 Recibe un puntaje entero, una posicion (x,y), un factor de escala y un renderer.
 Dibuja en la pantalla el puntaje trasladado a (x,y) y dimensionado por escala, en formato Asteroids.
@@ -255,6 +258,18 @@ int main()
 				vidas --;
 				nave_destruir(nave);
 				nave_murio = true;
+
+				if(!asteroide_destruccion(a, iter_ast, lista_ast, &puntaje))
+				{
+					fputs("Error de asignacion de memoria.\n", stderr);
+					graficador_finalizar();
+					lista_destruir(lista_ast, asteroide_destruir);
+					lista_destruir(lista_disp, disparo_destruir);
+					lista_iterador_destruir(iter_ast);
+
+					return 1;
+				}
+				continue;
 			}
 			//si la nave esta muerta y es tiempo de aparecer, chequeamos colision en el lugar de spawn
 			if(nave_murio && vidas!=0 && nave_espera >= 1)
@@ -285,92 +300,18 @@ int main()
 				disparo_t *d = lista_iterador_actual(iter_disp);
 				if(asteroide_colision(a, disparo_get_x(d), disparo_get_y(d)))
 				{
-					float x = asteroide_get_x(a);
-					float y = asteroide_get_y(a);
-
-					if(asteroide_get_radio(a) == ASTEROIDE_RADIO_CHICO) //destruimos el asteroide actual
+					if(!asteroide_destruccion(a, iter_ast, lista_ast, &puntaje))
 					{
-						asteroide_destruir(lista_iterador_eliminar(iter_ast));
+						fputs("Error de asignacion de memoria.\n", stderr);
+						graficador_finalizar();
+						lista_destruir(lista_ast, asteroide_destruir);
+						lista_destruir(lista_disp, disparo_destruir);
+						lista_iterador_destruir(iter_ast);
+						lista_iterador_destruir(iter_disp);
+						if(!nave_murio)
+							nave_destruir(nave);
 
-						puntaje += 100;
-					}
-
-					else if(asteroide_get_radio(a) == ASTEROIDE_RADIO_MEDIANO) //destruimos el actual y creamos dos asteroides de radio 8
-					{
-						asteroide_destruir(lista_iterador_eliminar(iter_ast));
-
-						asteroide_t * an = asteroide_crear(x,y,ASTEROIDE_RADIO_CHICO);
-						if(an == NULL)
-						{
-							fputs("Error de asignacion de memoria.\n", stderr);
-							graficador_finalizar();
-							lista_destruir(lista_ast, asteroide_destruir);
-							lista_destruir(lista_disp, disparo_destruir);
-							lista_iterador_destruir(iter_ast);
-							lista_iterador_destruir(iter_disp);
-							if(!nave_murio)
-								nave_destruir(nave);
-
-							return 1;
-						}
-						lista_insertar_final(lista_ast, an);
-
-						an = asteroide_crear(x,y,ASTEROIDE_RADIO_CHICO);
-						if(an == NULL)
-						{
-							fputs("Error de asignacion de memoria.\n", stderr);
-							graficador_finalizar();
-							lista_destruir(lista_ast, asteroide_destruir);
-							lista_destruir(lista_disp, disparo_destruir);
-							lista_iterador_destruir(iter_ast);
-							lista_iterador_destruir(iter_disp);
-							if(!nave_murio)
-								nave_destruir(nave);
-
-							return 1;
-						}
-						lista_insertar_final(lista_ast, an);
-
-						puntaje += 50;
-					}
-
-					else //destruimos el actual y creamos dos asteroides de radio 16
-					{
-						asteroide_destruir(lista_iterador_eliminar(iter_ast));
-
-						asteroide_t * an = asteroide_crear(x,y,ASTEROIDE_RADIO_MEDIANO);
-						if(an == NULL)
-						{
-							fputs("Error de asignacion de memoria.\n", stderr);
-							graficador_finalizar();
-							lista_destruir(lista_ast, asteroide_destruir);
-							lista_destruir(lista_disp, disparo_destruir);
-							lista_iterador_destruir(iter_ast);
-							lista_iterador_destruir(iter_disp);
-							if(!nave_murio)
-								nave_destruir(nave);
-
-							return 1;
-						}
-						lista_insertar_final(lista_ast, an);
-
-						an = asteroide_crear(x,y,ASTEROIDE_RADIO_MEDIANO);
-						if(an == NULL)
-						{
-							fputs("Error de asignacion de memoria.\n", stderr);
-							graficador_finalizar();
-							lista_destruir(lista_ast, asteroide_destruir);
-							lista_destruir(lista_disp, disparo_destruir);
-							lista_iterador_destruir(iter_ast);
-							lista_iterador_destruir(iter_disp);
-							if(!nave_murio)
-								nave_destruir(nave);
-
-							return 1;
-						}
-						lista_insertar_final(lista_ast, an);
-
-						puntaje += 20;
+						return 1;
 					}
 
 					disparo_destruir(lista_iterador_eliminar(iter_disp));
@@ -485,7 +426,7 @@ lista_t *inicializar_asteroides(int n)
 			y = 0;
 		}
 
-		if(!lista_insertar_final(lista_ast, asteroide_crear(x, y, ASTEROIDE_RADIO_GRANDE))) 
+		if(!lista_insertar_final(lista_ast, asteroide_crear(x, y, ASTEROIDE_RADIO_GRANDE)))
 		{
 			lista_destruir(lista_ast, asteroide_destruir);
 			return NULL;
@@ -493,6 +434,58 @@ lista_t *inicializar_asteroides(int n)
 	}
 
 	return lista_ast;
+}
+
+bool asteroide_destruccion(asteroide_t *a, lista_iterador_t *iter_ast, lista_t *lista_ast, int *puntaje)
+{
+	float x = asteroide_get_x(a);
+	float y = asteroide_get_y(a);
+
+	if(asteroide_get_radio(a) == ASTEROIDE_RADIO_CHICO) //destruimos el asteroide actual
+	{
+		asteroide_destruir(lista_iterador_eliminar(iter_ast));
+
+		*puntaje += 100;
+	}
+
+	else if(asteroide_get_radio(a) == ASTEROIDE_RADIO_MEDIANO) //destruimos el actual y creamos dos asteroides de radio 8
+	{
+		asteroide_destruir(lista_iterador_eliminar(iter_ast));
+
+		asteroide_t * an = asteroide_crear(x,y,ASTEROIDE_RADIO_CHICO);
+		if(an == NULL)
+			return false;
+
+		lista_insertar_final(lista_ast, an);
+
+		an = asteroide_crear(x,y,ASTEROIDE_RADIO_CHICO);
+		if(an == NULL)
+			return false;
+
+		lista_insertar_final(lista_ast, an);
+
+		*puntaje += 50;
+	}
+
+	else //destruimos el actual y creamos dos asteroides de radio 16
+	{
+		asteroide_destruir(lista_iterador_eliminar(iter_ast));
+
+		asteroide_t * an = asteroide_crear(x,y,ASTEROIDE_RADIO_MEDIANO);
+		if(an == NULL)
+			return false;
+
+		lista_insertar_final(lista_ast, an);
+
+		an = asteroide_crear(x,y,ASTEROIDE_RADIO_MEDIANO);
+		if(an == NULL)
+			return false;
+
+		lista_insertar_final(lista_ast, an);
+
+		*puntaje += 20;
+	}
+	return true;
 }
 
 void puntaje_graficar_asteroids(int puntaje, float x, float y, float escala, SDL_Renderer * renderer)

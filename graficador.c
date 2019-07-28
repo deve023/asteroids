@@ -130,9 +130,9 @@ bool graficador_dibujar(const char *nombre, float escala, float x, float y, floa
 			SDL_RenderDrawLine(
 				renderer,
 				(s->coords)[i][0] * escala + x,
-				-(s->coords)[i][1] * escala - y + h,
+				-(s->coords)[i][1] * escala - y + height,
 				(s->coords)[i+1][0] * escala + x,
-				-(s->coords)[i+1][1] * escala - y + h
+				-(s->coords)[i+1][1] * escala - y + height
 			);
     }
     vector_rotar(s->coords, s->n, -angulo);
