@@ -1,4 +1,10 @@
 #include "asteroide.h"
+#include "graficador.h"
+#include "config.h"
+#include "fisica.h"
+#include "matematica.h"
+
+#include <math.h>
 
 struct asteroide {
     float x;
@@ -35,7 +41,7 @@ asteroide_t *asteroide_crear(float x, float y, float radio)
 
 void asteroide_destruir(void * a)
 {
-	free((asteroide_t*)a);
+	free(a);
 }
 
 void asteroide_mover(asteroide_t * a, float dt)

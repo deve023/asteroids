@@ -22,7 +22,7 @@ Dibuja en la pantalla el puntaje trasladado a (x,y) y dimensionado por escala, e
 */
 void puntaje_graficar_asteroids(int puntaje, float x, float y, float escala, SDL_Renderer * renderer);
 
-int main() 
+int main()
 {
 	SDL_Init(SDL_INIT_VIDEO);
 
@@ -41,7 +41,7 @@ int main()
 	if(!graficador_inicializar("sprites.bin", renderer))
 	{
 		fputs("Error de inicializacion de graficador.\n", stderr);
-		
+
 		return 1;
 	}
 
@@ -180,7 +180,7 @@ int main()
 
 		// BEGIN código del alumno
 
-      	
+
         if(vidas == 0) //esto pasa solo en game over
 		{
 			cadena_graficar("GAME OVER", 400, 500, 4, renderer);
@@ -190,7 +190,7 @@ int main()
 				mejor_puntaje = puntaje;
 		}
 
-		
+
 		if(vidas != 0) //esto pasa solo durante la partida
 		{
 	        if(!nave_murio) //si la nave esta viva la movemos y graficamos
@@ -288,18 +288,18 @@ int main()
 					float x = asteroide_get_x(a);
 					float y = asteroide_get_y(a);
 
-					if(asteroide_get_radio(a) == 8) //destruimos el asteroide actual
+					if(asteroide_get_radio(a) == ASTEROIDE_RADIO_CHICO) //destruimos el asteroide actual
 					{
 						asteroide_destruir(lista_iterador_eliminar(iter_ast));
 
 						puntaje += 100;
 					}
 
-					else if(asteroide_get_radio(a) == 16) //destruimos el actual y creamos dos asteroides de radio 8
+					else if(asteroide_get_radio(a) == ASTEROIDE_RADIO_MEDIANO) //destruimos el actual y creamos dos asteroides de radio 8
 					{
 						asteroide_destruir(lista_iterador_eliminar(iter_ast));
 
-						asteroide_t * an = asteroide_crear(x,y,8);
+						asteroide_t * an = asteroide_crear(x,y,ASTEROIDE_RADIO_CHICO);
 						if(an == NULL)
 						{
 							fputs("Error de asignacion de memoria.\n", stderr);
@@ -315,7 +315,7 @@ int main()
 						}
 						lista_insertar_final(lista_ast, an);
 
-						an = asteroide_crear(x,y,8);
+						an = asteroide_crear(x,y,ASTEROIDE_RADIO_CHICO);
 						if(an == NULL)
 						{
 							fputs("Error de asignacion de memoria.\n", stderr);
@@ -338,7 +338,7 @@ int main()
 					{
 						asteroide_destruir(lista_iterador_eliminar(iter_ast));
 
-						asteroide_t * an = asteroide_crear(x,y,16);
+						asteroide_t * an = asteroide_crear(x,y,ASTEROIDE_RADIO_MEDIANO);
 						if(an == NULL)
 						{
 							fputs("Error de asignacion de memoria.\n", stderr);
@@ -354,7 +354,7 @@ int main()
 						}
 						lista_insertar_final(lista_ast, an);
 
-						an = asteroide_crear(x,y,16);
+						an = asteroide_crear(x,y,ASTEROIDE_RADIO_MEDIANO);
 						if(an == NULL)
 						{
 							fputs("Error de asignacion de memoria.\n", stderr);
@@ -462,7 +462,7 @@ int main()
 	return 0;
 }
 
-lista_t *inicializar_asteroides(int n) 
+lista_t *inicializar_asteroides(int n)
 {
 	lista_t *lista_ast = lista_crear();
 	if(lista_ast == NULL)
@@ -471,21 +471,21 @@ lista_t *inicializar_asteroides(int n)
 	float x, y; // Posicion incial de cada asteroide
 
 	//creamos n asteroides
-	for(size_t i = 0; i < n; i++) 
+	for(size_t i = 0; i < n; i++)
 	{
 		int s = rand() % 2;
-		if(s == 0) 
+		if(s == 0)
 		{
 			x = 0;
 			y = randomf(0, VENTANA_ALTO);
 		}
-		else 
+		else
 		{
 			x = randomf(0, VENTANA_ANCHO);
 			y = 0;
 		}
 
-		if(!lista_insertar_final(lista_ast, asteroide_crear(x, y, 32))) 
+		if(!lista_insertar_final(lista_ast, asteroide_crear(x, y, ASTEROIDE_RADIO_GRANDE))) 
 		{
 			lista_destruir(lista_ast, asteroide_destruir);
 			return NULL;

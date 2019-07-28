@@ -10,6 +10,8 @@
 #include "lista.h"
 #include "vector.h"
 
+#define TAM_NOMBRE 10
+
 bool graficador_inicializar(const char *fn, SDL_Renderer *r);
 void graficador_finalizar();
 

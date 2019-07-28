@@ -1,14 +1,14 @@
 #include "graficador.h"
 
 typedef struct sprite {
-    char nombre[10];
+    char nombre[TAM_NOMBRE];
     uint16_t n;
     float **coords;
 } sprite_t;
 
 static SDL_Renderer *renderer;
 
-static int w, h;
+static int width, height;
 
 //Lista con los sprites
 static lista_t *ls;
@@ -38,7 +38,7 @@ static int sprite_comparar_nombre(const void *s, const void *n)
 
 bool graficador_inicializar(const char *fn, SDL_Renderer *r)
 {
-    FILE *fp = fopen(fn, "r");
+    FILE *fp = fopen(fn, "rb");
     if(fp == NULL)
         return false;
 
@@ -91,7 +91,7 @@ bool graficador_inicializar(const char *fn, SDL_Renderer *r)
     fclose(fp);
 
     renderer = r;
-    SDL_GetRendererOutputSize(renderer, &w, &h);
+    SDL_GetRendererOutputSize(renderer, &width, &height);
 
     return true;
 }
@@ -103,19 +103,19 @@ void graficador_finalizar()
 
 void graficador_ajustar_variables(float *x, float *y)
 {
-    if(*x > w)
-        *x = fmod(*x,w);
+    if(*x > width)
+        *x = fmod(*x,width);
     else if(*x == 0)
-        *x = w;
+        *x = width;
     else if(*x < 0)
-        *x = w + fmod(*x,w);
+        *x = width + fmod(*x,width);
 
-    if(*y > h)
-        *y = fmod(*y,h);
+    if(*y > height)
+        *y = fmod(*y,height);
     else if(*y == 0)
-        *y = h;
+        *y = height;
     else if(*y < 0)
-        *y = h + fmod(*y,h);
+        *y = height + fmod(*y,height);
 }
 
 bool graficador_dibujar(const char *nombre, float escala, float x, float y, float angulo)

@@ -29,7 +29,7 @@ nave_t *nave_crear(float x, float y, float angulo)
 
 void nave_destruir(void *n)
 {
-    free((nave_t*)n);
+    free(n);
 }
 
 float nave_get_x(const nave_t *n)
