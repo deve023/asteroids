@@ -17,7 +17,10 @@
 lista_t *inicializar_asteroides(int n);
 
 // Destruye el asteroide a y crea dos asteroides mas pequenos dependiendo del radio
-bool asteroide_destruccion(asteroide_t *a, lista_iterador_t *iter_ast, lista_t *lista_ast, int *puntaje);
+bool asteroide_split(asteroide_t *a, lista_iterador_t *iter_ast, lista_t *lista_ast, int *puntaje);
+
+// Mueve dibuja y destruye, de ser necesario, el disparo d
+void disparo_actualizar(disparo_t *d);
 
 /*
 Recibe un puntaje entero, una posicion (x,y), un factor de escala y un renderer.
@@ -259,7 +262,7 @@ int main()
 				nave_destruir(nave);
 				nave_murio = true;
 
-				if(!asteroide_destruccion(a, iter_ast, lista_ast, &puntaje))
+				if(!asteroide_split(a, iter_ast, lista_ast, &puntaje))
 				{
 					fputs("Error de asignacion de memoria.\n", stderr);
 					graficador_finalizar();
@@ -300,7 +303,7 @@ int main()
 				disparo_t *d = lista_iterador_actual(iter_disp);
 				if(asteroide_colision(a, disparo_get_x(d), disparo_get_y(d)))
 				{
-					if(!asteroide_destruccion(a, iter_ast, lista_ast, &puntaje))
+					if(!asteroide_split(a, iter_ast, lista_ast, &puntaje))
 					{
 						fputs("Error de asignacion de memoria.\n", stderr);
 						graficador_finalizar();
@@ -355,10 +358,8 @@ int main()
 		for(; !lista_iterador_termino(iter_disp); lista_iterador_siguiente(iter_disp))
 		{
 			disparo_t * d = lista_iterador_actual(iter_disp);
-			disparo_mover(d, DT);
-			disparo_dibujar(d);
-			if(disparo_get_tiempo(d) >= DISPARO_TIEMPO_VIDA)
-				disparo_destruir(lista_iterador_eliminar(iter_disp));
+
+			disparo_actualizar(d);
 		}
 		lista_iterador_destruir(iter_disp);
 
@@ -436,7 +437,7 @@ lista_t *inicializar_asteroides(int n)
 	return lista_ast;
 }
 
-bool asteroide_destruccion(asteroide_t *a, lista_iterador_t *iter_ast, lista_t *lista_ast, int *puntaje)
+bool asteroide_split(asteroide_t *a, lista_iterador_t *iter_ast, lista_t *lista_ast, int *puntaje)
 {
 	float x = asteroide_get_x(a);
 	float y = asteroide_get_y(a);
@@ -486,6 +487,14 @@ bool asteroide_destruccion(asteroide_t *a, lista_iterador_t *iter_ast, lista_t *
 		*puntaje += 20;
 	}
 	return true;
+}
+
+void disparo_actualizar(disparo_t *d)
+{
+	disparo_mover(d, DT);
+	disparo_dibujar(d);
+	if(disparo_get_tiempo(d) >= DISPARO_TIEMPO_VIDA)
+		disparo_destruir(lista_iterador_eliminar(iter_disp));
 }
 
 void puntaje_graficar_asteroids(int puntaje, float x, float y, float escala, SDL_Renderer * renderer)
