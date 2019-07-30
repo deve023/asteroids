@@ -19,8 +19,8 @@ lista_t *inicializar_asteroides(int n);
 // Destruye el asteroide a y crea dos asteroides mas pequenos dependiendo del radio
 bool asteroide_split(asteroide_t *a, lista_iterador_t *iter_ast, lista_t *lista_ast, int *puntaje);
 
-// Mueve dibuja y destruye, de ser necesario, el disparo d
-void disparo_actualizar(disparo_t *d);
+// Recorre la lista disparos, moviendo, dibujando y destruyendo, de ser necesario, los disparos
+bool disparo_actualizar(lista_t *lista_disp);
 
 /*
 Recibe un puntaje entero, una posicion (x,y), un factor de escala y un renderer.
@@ -341,27 +341,19 @@ int main()
 			}
 		}
 
-		//ITERADOR DISPAROS
-		//Recorremos la lista de disparos moviendo y dibujando cada uno
-		//Eliminamos a los que tienen mas de 0.7 segundos de vida
-		lista_iterador_t *iter_disp = lista_iterador_crear(lista_disp);
-		if(iter_disp == NULL)
+		// Actualizamos los disparos
+		if(!disparo_actualizar(lista_disp))
 		{
 			fputs("Error de asignacion de memoria.\n", stderr);
 			graficador_finalizar();
-			nave_destruir(nave);
 			lista_destruir(lista_ast, asteroide_destruir);
 			lista_destruir(lista_disp, disparo_destruir);
+			lista_iterador_destruir(iter_ast);
+			if(!nave_murio)
+				nave_destruir(nave);
 
 			return 1;
 		}
-		for(; !lista_iterador_termino(iter_disp); lista_iterador_siguiente(iter_disp))
-		{
-			disparo_t * d = lista_iterador_actual(iter_disp);
-
-			disparo_actualizar(d);
-		}
-		lista_iterador_destruir(iter_disp);
 
 
 		//graficamos las vidas en la parte superior izquierda de la pantalla
@@ -489,12 +481,24 @@ bool asteroide_split(asteroide_t *a, lista_iterador_t *iter_ast, lista_t *lista_
 	return true;
 }
 
-void disparo_actualizar(disparo_t *d)
+bool disparo_actualizar(lista_t *lista_disp)
 {
-	disparo_mover(d, DT);
-	disparo_dibujar(d);
-	if(disparo_get_tiempo(d) >= DISPARO_TIEMPO_VIDA)
-		disparo_destruir(lista_iterador_eliminar(iter_disp));
+	lista_iterador_t *iter_disp = lista_iterador_crear(lista_disp);
+	if(iter_disp == NULL)
+		return false;
+
+	for(; !lista_iterador_termino(iter_disp); lista_iterador_siguiente(iter_disp))
+	{
+		disparo_t * d = lista_iterador_actual(iter_disp);
+
+		disparo_mover(d, DT);
+		disparo_dibujar(d);
+		if(disparo_get_tiempo(d) >= DISPARO_TIEMPO_VIDA)
+			disparo_destruir(lista_iterador_eliminar(iter_disp));
+	}
+	lista_iterador_destruir(iter_disp);
+
+	return true;
 }
 
 void puntaje_graficar_asteroids(int puntaje, float x, float y, float escala, SDL_Renderer * renderer)
