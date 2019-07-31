@@ -1,6 +1,12 @@
 #include "nave.h"
+#include "config.h"
+#include "graficador.h"
+#include "fisica.h"
 
-struct nave {
+#include <math.h>
+
+struct nave 
+{
     float x;
     float y;
     float vx;

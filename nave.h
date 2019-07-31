@@ -1,11 +1,7 @@
 #ifndef _NAVE_H_
 #define _NAVE_H_
 
-#include <math.h>
-
-#include "config.h"
-#include "graficador.h"
-#include "fisica.h"
+#include <stdbool.h>
 
 #define NAVE_SPRITE "SHIP"
 #define CHORRO_SPRITE "THURST"

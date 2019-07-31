@@ -1,7 +1,6 @@
 #ifndef _FISICA_H_
 #define _FISICA_H_
 
-#include <math.h>
 
 /*
 Recibe la velocidad actual vi, la aceleracion a y el paso temporal dt.

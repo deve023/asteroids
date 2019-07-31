@@ -1,6 +1,9 @@
 #include "diccionario.h"
 #include "caracteres.h"
 
+#include <stdio.h>
+#include <math.h>
+
 #define MAX_CARACTERES 100
 #define CANT_CARACTERES 41
 

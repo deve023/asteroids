@@ -5,6 +5,7 @@
 #include "lista.h"
 #include "graficador.h"
 #include "diccionario.h"
+#include "caracteres.h"
 #include "nave.h"
 #include "asteroide.h"
 #include "disparo.h"

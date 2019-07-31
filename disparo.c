@@ -1,6 +1,12 @@
 #include "disparo.h"
+#include "graficador.h"
+#include "config.h"
+#include "fisica.h"
 
-struct disparo{
+#include <math.h>
+
+struct disparo
+{
 	float x;
 	float y;
 	float vx;

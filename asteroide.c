@@ -6,7 +6,8 @@
 
 #include <math.h>
 
-struct asteroide {
+struct asteroide 
+{
     float x;
     float y;
     float vx;

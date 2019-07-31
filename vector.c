@@ -1,5 +1,12 @@
 #include "vector.h"
 #include "config.h"
+#include "matematica.h"
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <time.h>
+#include <math.h>
 
 /*
 Recibe dos variables p1 y p2 de tipo float **.

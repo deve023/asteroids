@@ -1,11 +1,7 @@
 #ifndef _DISPARO_H_
 #define _DISPARO_H_
 
-#include "graficador.h"
-#include "config.h"
-#include "fisica.h"
-
-#include <math.h>
+#include <stdbool.h>
 
 #define DISPARO_SPRITE "SHOT"
 

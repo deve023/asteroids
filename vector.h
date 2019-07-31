@@ -1,15 +1,9 @@
 #ifndef _VECTOR_H_
 #define _VECTOR_H_
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <time.h>
 #include <stdbool.h>
-#include <math.h>
 #include <SDL2/SDL.h>
 
-#include "matematica.h"
 
 /*
 Recibe un vector de coordenadas v de n elementos y un angulo rad.
@@ -48,10 +42,6 @@ Devuelve un vector de nn coordenadas con un margen de +-margen con respecto a la
 En caso de falla devuelve NULL.
 */
 float ** vector_densificar(float ** v, size_t nv, size_t nn, float margen);
-
-
-// Devuelve un vector que representa el terreno y su tamano n
-float ** crear_terreno (size_t * n);
 
 /*
 Recibe un vector de coordenadas v de n elementos, una posicion (x,y), un factor de escala y un renderer.

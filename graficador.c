@@ -1,4 +1,11 @@
 #include "graficador.h"
+#include "config.h"
+#include "lista.h"
+#include "vector.h"
+
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
 
 typedef struct sprite {
     char nombre[TAM_NOMBRE];

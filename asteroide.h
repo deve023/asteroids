@@ -1,13 +1,7 @@
 #ifndef _ASTEROIDE_H_
 #define _ASTEROIDE_H_
 
-#include "graficador.h"
-#include "config.h"
-#include "fisica.h"
-
-#include <math.h>
-
-#include "matematica.h"
+#include <stdbool.h>
 
 typedef struct asteroide asteroide_t;
 

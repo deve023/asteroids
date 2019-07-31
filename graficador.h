@@ -2,13 +2,8 @@
 #define _GRAFICADOR_H_
 
 #include <SDL2/SDL.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
+#include <stdbool.h>
 
-#include "config.h"
-#include "lista.h"
-#include "vector.h"
 
 #define TAM_NOMBRE 10
 

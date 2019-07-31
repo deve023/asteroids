@@ -1,11 +1,9 @@
 #ifndef _DICCIONARIO_H_
 #define _DICCIONARIO_H_
 
-#include "caracteres.h"
 
 #include <SDL2/SDL.h>
-#include <stdio.h>
-#include <math.h>
+
 
 typedef const int (*matriz_t)[2];
 
