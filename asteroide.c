@@ -17,7 +17,7 @@ struct asteroide
     char * clase;
 };
 
-char * asteroide_clases[4] = {
+static char * asteroide_clases[4] = {
 	"ROCK1", "ROCK2", "ROCK3", "ROCK4"
 };
 

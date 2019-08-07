@@ -20,8 +20,17 @@ lista_t *inicializar_asteroides(int n);
 // Destruye el asteroide a y crea dos asteroides mas pequenos dependiendo del radio
 bool asteroide_split(asteroide_t *a, lista_iterador_t *iter_ast, lista_t *lista_ast, int *puntaje);
 
+/*
+Verifica la colision entre un asteroide y cada disparo de la lista lista_disp, y hace los cambios necesarios
+en las variables del juego. Devuelve false en caso de error, devuelve true si se ejecuto correctamente.
+*/
+bool colision_asteroide_disparo(asteroide_t * a, lista_t * lista_ast, lista_t * lista_disp, lista_iterador_t * iter_ast, int * puntaje);
+
 // Recorre la lista disparos, moviendo, dibujando y destruyendo, de ser necesario, los disparos
-bool disparo_actualizar(lista_t *lista_disp);
+bool actualizar_disparos(lista_t *lista_disp);
+
+//Libera la memora asociada a la nave y a las listas de asteroides y de disparos, y finaliza el graficador 
+void destruir_objetos(nave_t * nave, lista_t * lista_ast, lista_t * lista_disp);
 
 /*
 Recibe un puntaje entero, una posicion (x,y), un factor de escala y un renderer.
@@ -132,11 +141,7 @@ int main()
 							if(dn == NULL)
 							{
 								fputs("Error de asignacion de memoria.\n", stderr);
-								graficador_finalizar();
-								nave_destruir(nave);
-								lista_destruir(lista_ast, asteroide_destruir);
-								lista_destruir(lista_disp, disparo_destruir);
-
+								destruir_objetos(nave, lista_ast, lista_disp);
 								return 1;
 							}
 
@@ -149,10 +154,7 @@ int main()
 							if(nave == NULL)
 							{
 								fputs("Error de asignacion de memoria.\n", stderr);
-								graficador_finalizar();
-								lista_destruir(lista_disp, disparo_destruir);
-								lista_destruir(lista_ast, asteroide_destruir);
-
+								destruir_objetos(nave, lista_ast, lista_disp);
 								return 1;
 							}
 
@@ -166,10 +168,7 @@ int main()
 							if(lista_ast == NULL)
 							{
 								fputs("Error de asignacion de memoria.\n", stderr);
-								graficador_finalizar();
-								nave_destruir(nave);
-								lista_destruir(lista_disp, disparo_destruir);
-
+								destruir_objetos(nave, lista_ast, lista_disp);
 								return 1;
 							}
 						}
@@ -226,10 +225,7 @@ int main()
 				if(nave == NULL)
 				{
 					fputs("Error de asignacion de memoria.\n", stderr);
-					graficador_finalizar();
-					lista_destruir(lista_ast, asteroide_destruir);
-					lista_destruir(lista_disp, disparo_destruir);
-
+					destruir_objetos(nave, lista_ast, lista_disp);
 					return 1;
 				}
 			}
@@ -242,11 +238,7 @@ int main()
         if(iter_ast == NULL)
 		{
 			fputs("Error de asignacion de memoria.\n", stderr);
-			graficador_finalizar();
-			nave_destruir(nave);
-			lista_destruir(lista_ast, asteroide_destruir);
-			lista_destruir(lista_disp, disparo_destruir);
-
+			destruir_objetos(nave, lista_ast, lista_disp);
 			return 1;
 		}
 
@@ -256,25 +248,26 @@ int main()
 			asteroide_mover(a, DT); //movemos asteroide actual
 			asteroide_dibujar(a); //dibujamos asteroide actual
 
-			//si la nave esta viva vemos si se choca con el asteroide
+			//si la nave esta viva, chequeamos si colisiona con el asteroide
 			if(!nave_murio && asteroide_colision(a, nave_get_x(nave), nave_get_y(nave)))
 			{
 				vidas --;
 				nave_destruir(nave);
+				nave = NULL;
 				nave_murio = true;
 
+				//destruimos el asteroide y creamos los asteroides correspondientes
 				if(!asteroide_split(a, iter_ast, lista_ast, &puntaje))
 				{
 					fputs("Error de asignacion de memoria.\n", stderr);
-					graficador_finalizar();
-					lista_destruir(lista_ast, asteroide_destruir);
-					lista_destruir(lista_disp, disparo_destruir);
+					destruir_objetos(nave, lista_ast, lista_disp);
 					lista_iterador_destruir(iter_ast);
-
 					return 1;
 				}
+
 				continue;
 			}
+
 			//si la nave esta muerta y es tiempo de aparecer, chequeamos colision en el lugar de spawn
 			if(nave_murio && vidas!=0 && nave_espera >= 1)
 			{
@@ -286,73 +279,36 @@ int main()
 			}
 
 			//chequeamos si el asteroide colisiona con algun disparo
-			lista_iterador_t *iter_disp = lista_iterador_crear(lista_disp);
-			if(iter_disp == NULL)
+			if(!colision_asteroide_disparo(a, lista_ast, lista_disp, iter_ast, &puntaje))
 			{
 				fputs("Error de asignacion de memoria.\n", stderr);
-				graficador_finalizar();
-				lista_destruir(lista_ast, asteroide_destruir);
-				lista_destruir(lista_disp, disparo_destruir);
+				destruir_objetos(nave, lista_ast, lista_disp);
 				lista_iterador_destruir(iter_ast);
-				if(!nave_murio)
-					nave_destruir(nave);
-
 				return 1;
 			}
-			for(; !lista_iterador_termino(iter_disp); lista_iterador_siguiente(iter_disp))
-			{
-				disparo_t *d = lista_iterador_actual(iter_disp);
-				if(asteroide_colision(a, disparo_get_x(d), disparo_get_y(d)))
-				{
-					if(!asteroide_split(a, iter_ast, lista_ast, &puntaje))
-					{
-						fputs("Error de asignacion de memoria.\n", stderr);
-						graficador_finalizar();
-						lista_destruir(lista_ast, asteroide_destruir);
-						lista_destruir(lista_disp, disparo_destruir);
-						lista_iterador_destruir(iter_ast);
-						lista_iterador_destruir(iter_disp);
-						if(!nave_murio)
-							nave_destruir(nave);
-
-						return 1;
-					}
-
-					disparo_destruir(lista_iterador_eliminar(iter_disp));
-
-					break;
-				}
-			}
-			lista_iterador_destruir(iter_disp);
 		}
 		lista_iterador_destruir(iter_ast);
 
-		if(lista_es_vacia(lista_ast)) //chequeamos si murieron todos los asteroides
+		//chequeamos si murieron todos los asteroides
+		if(lista_es_vacia(lista_ast)) 
 		{
 			free(lista_ast);
-			asteroides_cant += 2;
+			asteroides_cant += ASTEROIDES_INCREMENTO;
 			lista_ast = inicializar_asteroides(asteroides_cant);
-			if(lista_ast == NULL) {
+			if(lista_ast == NULL) 
+			{
 				fputs("Error de asignacion de memoria.\n", stderr);
-				graficador_finalizar();
-				nave_destruir(nave);
-				lista_destruir(lista_disp, disparo_destruir);
-
+				destruir_objetos(nave, lista_ast, lista_disp);
 				return 1;
 			}
 		}
 
-		// Actualizamos los disparos
-		if(!disparo_actualizar(lista_disp))
+		//actualizamos los disparos
+		if(!actualizar_disparos(lista_disp))
 		{
 			fputs("Error de asignacion de memoria.\n", stderr);
-			graficador_finalizar();
-			lista_destruir(lista_ast, asteroide_destruir);
-			lista_destruir(lista_disp, disparo_destruir);
+			destruir_objetos(nave, lista_ast, lista_disp);
 			lista_iterador_destruir(iter_ast);
-			if(!nave_murio)
-				nave_destruir(nave);
-
 			return 1;
 		}
 
@@ -383,10 +339,7 @@ int main()
 
 	// BEGIN código del alumno
 
-	nave_destruir(nave);
-	lista_destruir(lista_ast, asteroide_destruir);
-	lista_destruir(lista_disp, disparo_destruir);
-	graficador_finalizar();
+	destruir_objetos(nave, lista_ast, lista_disp);
 
 	// END código del alumno
 
@@ -434,18 +387,17 @@ bool asteroide_split(asteroide_t *a, lista_iterador_t *iter_ast, lista_t *lista_
 {
 	float x = asteroide_get_x(a);
 	float y = asteroide_get_y(a);
+	float radio = asteroide_get_radio(a);
 
-	if(asteroide_get_radio(a) == ASTEROIDE_RADIO_CHICO) //destruimos el asteroide actual
+	asteroide_destruir(lista_iterador_eliminar(iter_ast));
+
+	if(radio == ASTEROIDE_RADIO_CHICO)
 	{
-		asteroide_destruir(lista_iterador_eliminar(iter_ast));
-
-		*puntaje += 100;
+		*puntaje += PUNTAJE_ASTEROIDE_CHICO;
 	}
 
-	else if(asteroide_get_radio(a) == ASTEROIDE_RADIO_MEDIANO) //destruimos el actual y creamos dos asteroides de radio 8
+	else if(radio == ASTEROIDE_RADIO_MEDIANO) //creamos dos asteroides de radio 8
 	{
-		asteroide_destruir(lista_iterador_eliminar(iter_ast));
-
 		asteroide_t * an = asteroide_crear(x,y,ASTEROIDE_RADIO_CHICO);
 		if(an == NULL)
 			return false;
@@ -458,13 +410,11 @@ bool asteroide_split(asteroide_t *a, lista_iterador_t *iter_ast, lista_t *lista_
 
 		lista_insertar_final(lista_ast, an);
 
-		*puntaje += 50;
+		*puntaje += PUNTAJE_ASTEROIDE_MEDIANO;
 	}
 
-	else //destruimos el actual y creamos dos asteroides de radio 16
+	else //creamos dos asteroides de radio 16
 	{
-		asteroide_destruir(lista_iterador_eliminar(iter_ast));
-
 		asteroide_t * an = asteroide_crear(x,y,ASTEROIDE_RADIO_MEDIANO);
 		if(an == NULL)
 			return false;
@@ -477,12 +427,12 @@ bool asteroide_split(asteroide_t *a, lista_iterador_t *iter_ast, lista_t *lista_
 
 		lista_insertar_final(lista_ast, an);
 
-		*puntaje += 20;
+		*puntaje += PUNTAJE_ASTEROIDE_GRANDE;
 	}
 	return true;
 }
 
-bool disparo_actualizar(lista_t *lista_disp)
+bool actualizar_disparos(lista_t *lista_disp)
 {
 	lista_iterador_t *iter_disp = lista_iterador_crear(lista_disp);
 	if(iter_disp == NULL)
@@ -508,4 +458,46 @@ void puntaje_graficar_asteroids(int puntaje, float x, float y, float escala, SDL
 			contador_graficar_ceros(puntaje, 2, x, y, escala, renderer);
 		else
 			contador_graficar_derecha(puntaje, PUNTAJE_DIGITOS_MAX, x-(PUNTAJE_DIGITOS_MAX-2)*CARACTER_ANCHO*escala, y, escala, renderer);
+}
+
+bool colision_asteroide_disparo(asteroide_t * a, lista_t * lista_ast, lista_t * lista_disp, lista_iterador_t * iter_ast, int * puntaje)
+{
+	lista_iterador_t *iter_disp = lista_iterador_crear(lista_disp);
+	if(iter_disp == NULL)
+	{
+		return false;
+	}
+	for(; !lista_iterador_termino(iter_disp); lista_iterador_siguiente(iter_disp))
+	{
+		disparo_t *d = lista_iterador_actual(iter_disp);
+		if(asteroide_colision(a, disparo_get_x(d), disparo_get_y(d)))
+		{
+			if(!asteroide_split(a, iter_ast, lista_ast, puntaje))
+			{
+				lista_iterador_destruir(iter_disp);
+				return false;
+			}
+
+			disparo_destruir(lista_iterador_eliminar(iter_disp));
+
+			break;
+		}
+	}
+	lista_iterador_destruir(iter_disp);
+
+	return true;
+}
+
+void destruir_objetos(nave_t * nave, lista_t * lista_ast, lista_t * lista_disp)
+{
+	nave_destruir(nave);
+	nave = NULL;
+
+	lista_destruir(lista_ast, asteroide_destruir);
+	lista_ast = NULL;
+
+	lista_destruir(lista_disp, disparo_destruir);
+	lista_disp = NULL;
+
+	graficador_finalizar();
 }

@@ -40,6 +40,9 @@ lista_t *lista_crear()
 
 void lista_destruir(lista_t *l, void (*destruir_dato)(void *d))
 {
+	if(l == NULL)
+		return;
+
 	nodo_t *actual = l->prim;
 	while(actual != NULL)
 	{
