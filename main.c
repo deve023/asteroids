@@ -29,7 +29,7 @@ bool colision_asteroide_disparo(asteroide_t * a, lista_t * lista_ast, lista_t * 
 // Recorre la lista disparos, moviendo, dibujando y destruyendo, de ser necesario, los disparos
 bool actualizar_disparos(lista_t *lista_disp);
 
-//Libera la memora asociada a la nave y a las listas de asteroides y de disparos, y finaliza el graficador 
+//Libera la memora asociada a la nave y a las listas de asteroides y de disparos, y finaliza el graficador
 void destruir_objetos(nave_t * nave, lista_t * lista_ast, lista_t * lista_disp);
 
 /*
@@ -51,7 +51,6 @@ int main()
 
 	int dormir = 0;
 
-	// BEGIN código del alumno
 	srand(time(NULL));
 
 	if(!graficador_inicializar("sprites.bin", renderer))
@@ -103,8 +102,6 @@ int main()
 
 	int mejor_puntaje = 0;
 
-	// END código del alumno
-
 	unsigned int ticks = SDL_GetTicks();
 
 	while(1)
@@ -116,7 +113,6 @@ int main()
 
 	    	if(event.type == SDL_KEYDOWN)
 	    	{
-				// BEGIN código del alumno
 				switch(event.key.keysym.sym)
 				{
 					case SDLK_UP:
@@ -174,7 +170,6 @@ int main()
 						}
 						break;
 				}
-				// END código del alumno
 			}
 			continue;
 		}
@@ -182,9 +177,6 @@ int main()
     	SDL_SetRenderDrawColor(renderer, 0x00, 0x00, 0x00, 0x00);
     	SDL_RenderClear(renderer);
     	SDL_SetRenderDrawColor(renderer, 0xFF, 0xFF, 0xFF, 0x00);
-
-
-		// BEGIN código del alumno
 
 
         if(vidas == 0) //esto pasa solo en game over
@@ -290,12 +282,12 @@ int main()
 		lista_iterador_destruir(iter_ast);
 
 		//chequeamos si murieron todos los asteroides
-		if(lista_es_vacia(lista_ast)) 
+		if(lista_es_vacia(lista_ast))
 		{
 			free(lista_ast);
 			asteroides_cant += ASTEROIDES_INCREMENTO;
 			lista_ast = inicializar_asteroides(asteroides_cant);
-			if(lista_ast == NULL) 
+			if(lista_ast == NULL)
 			{
 				fputs("Error de asignacion de memoria.\n", stderr);
 				destruir_objetos(nave, lista_ast, lista_disp);
@@ -324,8 +316,6 @@ int main()
 		puntaje_graficar_asteroids(mejor_puntaje, VENTANA_ANCHO/2, VENTANA_ALTO-75, 2, renderer);
 
 
-		// END código del alumno
-
         SDL_RenderPresent(renderer);
 		ticks = SDL_GetTicks() - ticks;
 		if(dormir) {
@@ -337,11 +327,7 @@ int main()
 		ticks = SDL_GetTicks();
 	}
 
-	// BEGIN código del alumno
-
 	destruir_objetos(nave, lista_ast, lista_disp);
-
-	// END código del alumno
 
 	SDL_DestroyRenderer(renderer);
 	SDL_DestroyWindow(window);
